@@ -150,7 +150,13 @@ export default function Home() {
                 ]);
               }}
             />{" "}
-            {combination.join(", ")}
+            [
+            {formatTime(
+              [...times]
+                .filter(([task]) => combination.includes(task))
+                .reduce((previous, [, current]) => previous + current, 0)
+            )}
+            ]{combination.join(", ")}
           </li>
         ))}
       </ul>
