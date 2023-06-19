@@ -113,10 +113,33 @@ export default function Home() {
             />{" "}
             <input
               type="button"
-              value="Resume all"
+              value="Resume these"
               onClick={() => {
                 setEvents([
                   ...events,
+                  ...combination
+                    .filter((task) => !ongoingTasks.includes(task))
+                    .map((task) => ({
+                      task,
+                      time: date.valueOf(),
+                      type: "resume" as const,
+                    })),
+                ]);
+              }}
+            />{" "}
+            <input
+              type="button"
+              value="Resume these and pause others"
+              onClick={() => {
+                setEvents([
+                  ...events,
+                  ...ongoingTasks
+                    .filter((task) => !combination.includes(task))
+                    .map((task) => ({
+                      task,
+                      time: date.valueOf(),
+                      type: "pause" as const,
+                    })),
                   ...combination
                     .filter((task) => !ongoingTasks.includes(task))
                     .map((task) => ({
