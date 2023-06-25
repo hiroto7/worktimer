@@ -2,11 +2,11 @@ import { css, keyframes, styled } from "@mui/material";
 
 const blink = keyframes`
   0% {
-    visibility: visible;
+    opacity: 1;
   }
-  
+
   50% {
-    visibility: hidden;
+    opacity: 0.5;
   }
 `;
 
