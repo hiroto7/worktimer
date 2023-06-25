@@ -1,7 +1,8 @@
 "use client";
 
+import { FormattedTime } from "@/components/FormattedTime";
 import { TaskCard } from "@/components/TaskCard";
-import { TaskEvent, calculateTaskTimes, formatTime } from "@/lib";
+import { TaskEvent, calculateTaskTimes } from "@/lib";
 import { useDate } from "@/lib/hooks/use-date";
 import { Add, Clear, GitHub, Pause } from "@mui/icons-material";
 import {
@@ -109,7 +110,10 @@ const Home = () => {
             worktimer
           </Typography>
           <Typography variant="body1" mr={1}>
-            {formatTime(totalTime)}
+            <FormattedTime
+              time={totalTime}
+              blinking={ongoingTasks.length > 0}
+            />
           </Typography>
           <IconButton
             color="inherit"

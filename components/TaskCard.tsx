@@ -1,4 +1,3 @@
-import { formatTime } from "@/lib";
 import {
   Delete,
   Edit,
@@ -23,6 +22,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
+import { FormattedTime } from "./FormattedTime";
 
 const MoreMenuButton: React.FC<{
   deleteDisabled: boolean;
@@ -126,7 +126,7 @@ export const TaskCard: React.FC<{
             variant="h3"
             color={ongoing ? "primary.dark" : "text.secondary"}
           >
-            {formatTime(time)}
+            <FormattedTime time={time} blinking={ongoing} />
           </Typography>
         </CardContent>
       </CardActionArea>
