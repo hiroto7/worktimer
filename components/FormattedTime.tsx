@@ -27,7 +27,7 @@ export const FormattedTime: React.FC<{ time: number; blinking: boolean }> = ({
   time,
   blinking,
 }) => {
-  const timeInSeconds = time / 1000;
+  const timeInSeconds = Math.round(time / 100) / 10;
 
   const hours = Math.floor(timeInSeconds / 3600);
   const minutes = Math.floor((timeInSeconds % 3600) / 60);
