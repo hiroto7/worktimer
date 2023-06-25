@@ -38,7 +38,12 @@ import {
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useState } from "react";
 
-const MoreMenuButton: React.FC<{ onFocus: () => void }> = ({ onFocus }) => {
+const MoreMenuButton: React.FC<{
+  deleteDisabled: boolean;
+  onFocus: () => void;
+  onRename: (name: string) => void;
+  onDelete: () => void;
+}> = ({ deleteDisabled, onFocus, onRename, onDelete }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -59,13 +64,19 @@ const MoreMenuButton: React.FC<{ onFocus: () => void }> = ({ onFocus }) => {
           </ListItemIcon>
           <ListItemText>Solo</ListItemText>
         </MenuItem>
-        <MenuItem disabled>
+        <MenuItem
+          onClick={() => {
+            const name = prompt();
+            if (name) onRename(name);
+            setAnchorEl(null);
+          }}
+        >
           <ListItemIcon>
             <Edit />
           </ListItemIcon>
           <ListItemText>Rename</ListItemText>
         </MenuItem>
-        <MenuItem disabled>
+        <MenuItem disabled={deleteDisabled} onClick={onDelete}>
           <ListItemIcon>
             <Delete />
           </ListItemIcon>
@@ -83,7 +94,18 @@ const TaskCard: React.FC<{
   onPause: () => void;
   onResume: () => void;
   onFocus: () => void;
-}> = ({ task, time, ongoing, onPause, onResume, onFocus }) => {
+  onRename: (name: string) => void;
+  onDelete: () => void;
+}> = ({
+  task,
+  time,
+  ongoing,
+  onPause,
+  onResume,
+  onFocus,
+  onRename,
+  onDelete,
+}) => {
   const theme = useTheme();
 
   return (
@@ -121,7 +143,12 @@ const TaskCard: React.FC<{
         disableSpacing
         sx={{ flexDirection: "column", justifyContent: "space-between" }}
       >
-        <MoreMenuButton onFocus={onFocus} />
+        <MoreMenuButton
+          deleteDisabled={time > 0}
+          onFocus={onFocus}
+          onRename={onRename}
+          onDelete={onDelete}
+        />
         {ongoing ? (
           <IconButton onClick={onPause}>
             <Pause />
@@ -138,7 +165,7 @@ const TaskCard: React.FC<{
 
 const Home = () => {
   const [events, setEvents] = useState<readonly TaskEvent[]>([]);
-  const [tasks, setTasks] = useState<ReadonlySet<string>>(new Set());
+  const [tasks, setTasks] = useState<ReadonlyMap<string, string>>(new Map());
   const date = useDate();
 
   const times = calculateTaskTimes(events, date.valueOf());
@@ -147,7 +174,7 @@ const Home = () => {
     0
   );
 
-  const ongoingTasks = [...tasks].filter(
+  const ongoingTasks = [...tasks.keys()].filter(
     (task) => events.findLast((event) => event.task === task)?.type === "resume"
   );
 
@@ -194,8 +221,14 @@ const Home = () => {
 
   const add = () => {
     const task = prompt();
-    if (task) setTasks(new Set([...tasks, task]));
+    if (task) setTasks(new Map([...tasks, [crypto.randomUUID(), task]]));
   };
+
+  const rename = (uuid: string, name: string) =>
+    setTasks(new Map([...tasks, [uuid, name]]));
+
+  const deleteTask = (task: string) =>
+    setTasks(new Map([...tasks].filter(([key]) => key !== task)));
 
   return (
     <>
@@ -263,15 +296,17 @@ const Home = () => {
           </Box>
           <Box>
             <Grid container spacing={2}>
-              {[...tasks].map((task) => (
-                <Grid xs={12} sm={6} md={4} lg={3} key={task}>
+              {[...tasks].map(([uuid, name]) => (
+                <Grid xs={12} sm={6} md={4} lg={3} key={uuid}>
                   <TaskCard
-                    task={task}
-                    ongoing={ongoingTasks.includes(task)}
-                    time={times.get(task) ?? 0}
-                    onPause={() => pause(task)}
-                    onResume={() => resume(task)}
-                    onFocus={() => focus(task)}
+                    task={name}
+                    ongoing={ongoingTasks.includes(uuid)}
+                    time={times.get(uuid) ?? 0}
+                    onPause={() => pause(uuid)}
+                    onResume={() => resume(uuid)}
+                    onFocus={() => focus(uuid)}
+                    onRename={(name) => rename(uuid, name)}
+                    onDelete={() => deleteTask(uuid)}
                   />
                 </Grid>
               ))}
