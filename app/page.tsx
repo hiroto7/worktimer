@@ -23,6 +23,7 @@ import {
   CardContent,
   Container,
   CssBaseline,
+  Divider,
   Fab,
   IconButton,
   ListItemIcon,
@@ -65,6 +66,7 @@ const MoreMenuButton: React.FC<{
           </ListItemIcon>
           <ListItemText>Solo</ListItemText>
         </MenuItem>
+        <Divider />
         <MenuItem
           onClick={() => {
             const name = prompt(undefined, task);
