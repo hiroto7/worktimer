@@ -117,14 +117,14 @@ export const TaskCard: React.FC<{
           : {}),
       }}
     >
-      <CardActionArea onClick={() => (ongoing ? onPause() : onFocus())}>
+      <CardActionArea onClick={ongoing ? onPause : onFocus}>
         <CardContent>
           <Typography variant="h5" component="h3">
             {task}
           </Typography>
           <Typography
             variant="h3"
-            color={ongoing ? "primary.dark" : "text.secondary"}
+            color={ongoing ? "primary.main" : "text.secondary"}
           >
             <FormattedTime time={time} blinking={ongoing} />
           </Typography>
