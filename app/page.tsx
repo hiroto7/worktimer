@@ -4,6 +4,7 @@ import { TaskEvent, calculateTaskTimes, formatTime } from "@/lib";
 import { useDate } from "@/lib/hooks/use-date";
 import {
   Add,
+  Clear,
   Delete,
   Edit,
   GitHub,
@@ -204,7 +205,9 @@ const Home = () => {
           <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
             worktimer
           </Typography>
-          <Typography variant="body1">{formatTime(totalTime)}</Typography>
+          <Typography variant="body1" mr={1}>
+            {formatTime(totalTime)}
+          </Typography>
           <IconButton
             color="inherit"
             disabled={ongoingTasks.length === 0}
@@ -220,6 +223,16 @@ const Home = () => {
             }
           >
             <Pause />
+          </IconButton>
+          <IconButton
+            color="inherit"
+            disabled={events.length === 0}
+            onClick={() =>
+              confirm("Are you sure you want to clear time for all tasks?") &&
+              setEvents([])
+            }
+          >
+            <Clear />
           </IconButton>
           <IconButton
             href="https://github.com/hiroto7/worktimer/"
