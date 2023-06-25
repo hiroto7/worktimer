@@ -13,16 +13,30 @@ import {
   Fab,
   IconButton,
   Stack,
+  ThemeProvider,
   Toolbar,
   Typography,
+  createTheme,
+  useMediaQuery,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const Home = () => {
   const [events, setEvents] = useState<readonly TaskEvent[]>([]);
   const [tasks, setTasks] = useState<ReadonlyMap<string, string>>(new Map());
   const date = useDate();
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? "dark" : "light",
+        },
+      }),
+    [prefersDarkMode]
+  );
 
   const times = calculateTaskTimes(events, date.valueOf());
   const totalTime = [...times.values()].reduce(
@@ -87,7 +101,7 @@ const Home = () => {
     setTasks(new Map([...tasks].filter(([key]) => key !== task)));
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <AppBar position="static">
         <Toolbar>
@@ -170,7 +184,7 @@ const Home = () => {
           </Box>
         </Stack>
       </Container>
-    </>
+    </ThemeProvider>
   );
 };
 
