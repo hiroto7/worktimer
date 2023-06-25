@@ -39,11 +39,12 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useState } from "react";
 
 const MoreMenuButton: React.FC<{
+  task: string;
   deleteDisabled: boolean;
   onFocus: () => void;
   onRename: (name: string) => void;
   onDelete: () => void;
-}> = ({ deleteDisabled, onFocus, onRename, onDelete }) => {
+}> = ({ task, deleteDisabled, onFocus, onRename, onDelete }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -66,7 +67,7 @@ const MoreMenuButton: React.FC<{
         </MenuItem>
         <MenuItem
           onClick={() => {
-            const name = prompt();
+            const name = prompt(undefined, task);
             if (name) onRename(name);
             setAnchorEl(null);
           }}
@@ -144,6 +145,7 @@ const TaskCard: React.FC<{
         sx={{ flexDirection: "column", justifyContent: "space-between" }}
       >
         <MoreMenuButton
+          task={task}
           deleteDisabled={time > 0}
           onFocus={onFocus}
           onRename={onRename}
