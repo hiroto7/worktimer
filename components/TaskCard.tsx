@@ -25,12 +25,11 @@ import {
 import React from "react";
 
 const MoreMenuButton: React.FC<{
-  task: string;
   deleteDisabled: boolean;
   onFocus: () => void;
-  onRename: (name: string) => void;
+  onRename: () => void;
   onDelete: () => void;
-}> = ({ task, deleteDisabled, onFocus, onRename, onDelete }) => {
+}> = ({ deleteDisabled, onFocus, onRename, onDelete }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -54,8 +53,7 @@ const MoreMenuButton: React.FC<{
         <Divider />
         <MenuItem
           onClick={() => {
-            const name = prompt(undefined, task);
-            if (name) onRename(name);
+            onRename();
             setAnchorEl(null);
           }}
         >
@@ -64,7 +62,13 @@ const MoreMenuButton: React.FC<{
           </ListItemIcon>
           <ListItemText>Rename</ListItemText>
         </MenuItem>
-        <MenuItem disabled={deleteDisabled} onClick={onDelete}>
+        <MenuItem
+          disabled={deleteDisabled}
+          onClick={() => {
+            onDelete();
+            setAnchorEl(null);
+          }}
+        >
           <ListItemIcon>
             <Delete />
           </ListItemIcon>
@@ -132,10 +136,12 @@ export const TaskCard: React.FC<{
         sx={{ flexDirection: "column", justifyContent: "space-between" }}
       >
         <MoreMenuButton
-          task={task}
           deleteDisabled={time > 0}
           onFocus={onFocus}
-          onRename={onRename}
+          onRename={() => {
+            const name = prompt(undefined, task);
+            if (name) onRename(name);
+          }}
           onDelete={onDelete}
         />
         {ongoing ? (
