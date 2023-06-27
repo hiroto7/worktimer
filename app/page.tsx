@@ -11,9 +11,13 @@ import {
   Button,
   Container,
   CssBaseline,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Fab,
   IconButton,
   Stack,
+  TextField,
   ThemeProvider,
   Toolbar,
   Typography,
@@ -22,6 +26,56 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { useEffect, useMemo, useState } from "react";
+
+const AddTasksButton: React.FC<{
+  onAdd: (tasks: readonly string[]) => void;
+}> = ({ onAdd }) => {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+
+  const tasks = text.split("\n").filter((line) => line.trim().length > 0);
+
+  return (
+    <>
+      <Button
+        startIcon={<Add />}
+        onClick={() => setOpen(true)}
+        variant="contained"
+      >
+        Add
+      </Button>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Tasks"
+            fullWidth
+            multiline
+            onChange={(event) => setText(event.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setOpen(false);
+              onAdd(tasks);
+            }}
+            disabled={tasks.length === 0}
+          >
+            {tasks.length <= 1 ? "Add task" : `Add ${tasks.length} tasks`}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
 
 const Home = () => {
   const [events, setEvents] = useState<readonly TaskEvent[]>();
@@ -124,6 +178,15 @@ const Home = () => {
     if (task) setTasks(new Map([...tasks, [crypto.randomUUID(), task]]));
   };
 
+  const addTasks = (newTasks: readonly string[]) =>
+    setTasks(
+      new Map([
+        ...tasks,
+        ...newTasks.map((task) => [crypto.randomUUID(), task] as const),
+      ])
+    );
+  
+
   const rename = (uuid: string, name: string) =>
     setTasks(new Map([...tasks, [uuid, name]]));
 
@@ -193,9 +256,7 @@ const Home = () => {
       <Container component="main">
         <Stack spacing={2} sx={{ my: 2 }} useFlexGap>
           <Box sx={{ display: { xs: "none", md: "block" } }}>
-            <Button startIcon={<Add />} onClick={add} variant="contained">
-              Add
-            </Button>
+            <AddTasksButton onAdd={addTasks} />
           </Box>
           <Box>
             <Grid container spacing={2}>
