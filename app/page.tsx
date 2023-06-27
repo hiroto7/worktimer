@@ -21,11 +21,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Home = () => {
-  const [events, setEvents] = useState<readonly TaskEvent[]>([]);
-  const [tasks, setTasks] = useState<ReadonlyMap<string, string>>(new Map());
+  const [events, setEvents] = useState<readonly TaskEvent[]>();
+  const [tasks, setTasks] = useState<ReadonlyMap<string, string>>();
   const date = useDate();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
@@ -38,6 +38,35 @@ const Home = () => {
       }),
     [prefersDarkMode]
   );
+
+  useEffect(() => {
+    const text = localStorage.getItem("tasks");
+    if (text === null) setTasks(new Map());
+    else {
+      const tasks = new Map(Object.entries<string>(JSON.parse(text)));
+      setTasks(tasks);
+    }
+  }, []);
+
+  useEffect(() => {
+    const text = localStorage.getItem("events");
+    if (text === null) setEvents([]);
+    else {
+      const events: TaskEvent[] = JSON.parse(text);
+      setEvents(events);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (tasks === undefined) return;
+    localStorage.setItem("tasks", JSON.stringify(Object.fromEntries(tasks)));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem("events", JSON.stringify(events));
+  }, [events]);
+
+  if (events === undefined || tasks === undefined) return undefined;
 
   const times = calculateTaskTimes(events, date.valueOf());
   const totalTime = [...times.values()].reduce(
