@@ -33,7 +33,10 @@ const AddTasksButton: React.FC<{
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
 
-  const tasks = text.split("\n").filter((line) => line.trim().length > 0);
+  const tasks = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 
   return (
     <>
