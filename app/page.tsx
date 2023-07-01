@@ -1,12 +1,10 @@
 "use client";
 
-import { FormattedTime } from "@/components/FormattedTime";
+import { MyAppBar } from "@/components/MyAppBar";
 import { TaskCard } from "@/components/TaskCard";
-import { TaskEvent, calculateTaskTimes } from "@/lib";
-import { useDate } from "@/lib/hooks/use-date";
-import { Add, Clear, GitHub, Pause } from "@mui/icons-material";
+import { TaskEvent, analyzeTaskEventSequence } from "@/lib";
+import { Add } from "@mui/icons-material";
 import {
-  AppBar,
   Box,
   Button,
   Container,
@@ -15,12 +13,9 @@ import {
   DialogActions,
   DialogContent,
   Fab,
-  IconButton,
   Stack,
   TextField,
   ThemeProvider,
-  Toolbar,
-  Typography,
   createTheme,
   useMediaQuery,
 } from "@mui/material";
@@ -83,7 +78,6 @@ const AddTasksButton: React.FC<{
 const Home = () => {
   const [events, setEvents] = useState<readonly TaskEvent[]>();
   const [tasks, setTasks] = useState<ReadonlyMap<string, string>>();
-  const date = useDate();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const theme = useMemo(
@@ -125,22 +119,19 @@ const Home = () => {
 
   if (events === undefined || tasks === undefined) return undefined;
 
-  const times = calculateTaskTimes(events, date.valueOf());
-  const totalTime = [...times.values()].reduce(
+  const { elapsedTimes, ongoingTasks } = analyzeTaskEventSequence(events);
+  const totalTime = [...elapsedTimes.values()].reduce(
     (previous, current) => previous + current,
     0
   );
-
-  const ongoingTasks = [...tasks.keys()].filter(
-    (task) => events.findLast((event) => event.task === task)?.type === "resume"
-  );
+  const lastEventTime = events.at(-1)?.time;
 
   const resume = (task: string) =>
     setEvents([
       ...events,
       {
         task,
-        time: date.valueOf(),
+        time: Date.now(),
         type: "resume",
       },
     ]);
@@ -150,7 +141,7 @@ const Home = () => {
       ...events,
       {
         task,
-        time: date.valueOf(),
+        time: Date.now(),
         type: "pause",
       },
     ]);
@@ -158,23 +149,35 @@ const Home = () => {
   const focus = (task: string) =>
     setEvents([
       ...events,
-      ...ongoingTasks
+      ...[...ongoingTasks]
         .filter((ongoing) => ongoing !== task)
         .map((task) => ({
           task,
-          time: date.valueOf(),
+          time: Date.now(),
           type: "pause" as const,
         })),
-      ...(ongoingTasks.includes(task)
+      ...(ongoingTasks.has(task)
         ? []
         : [
             {
               task,
-              time: date.valueOf(),
+              time: Date.now(),
               type: "resume" as const,
             },
           ]),
     ]);
+
+  const pauseAll = () =>
+    setEvents([
+      ...events,
+      ...[...ongoingTasks].map((task) => ({
+        task,
+        time: Date.now(),
+        type: "pause" as const,
+      })),
+    ]);
+
+  const clear = () => setEvents([]);
 
   const add = () => {
     const task = prompt();
@@ -188,7 +191,6 @@ const Home = () => {
         ...newTasks.map((task) => [crypto.randomUUID(), task] as const),
       ])
     );
-  
 
   const rename = (uuid: string, name: string) =>
     setTasks(new Map([...tasks, [uuid, name]]));
@@ -199,51 +201,16 @@ const Home = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar position="sticky">
-        <Toolbar>
-          <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
-            worktimer
-          </Typography>
-          <Typography variant="body1" mr={1}>
-            <FormattedTime
-              time={totalTime}
-              blinking={ongoingTasks.length > 0}
-            />
-          </Typography>
-          <IconButton
-            color="inherit"
-            disabled={ongoingTasks.length === 0}
-            onClick={() =>
-              setEvents([
-                ...events,
-                ...ongoingTasks.map((task) => ({
-                  task,
-                  time: date.valueOf(),
-                  type: "pause" as const,
-                })),
-              ])
-            }
-          >
-            <Pause />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            disabled={events.length === 0}
-            onClick={() =>
-              confirm("Are you sure you want to clear time for all tasks?") &&
-              setEvents([])
-            }
-          >
-            <Clear />
-          </IconButton>
-          <IconButton
-            href="https://github.com/hiroto7/worktimer/"
-            color="inherit"
-          >
-            <GitHub />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      <MyAppBar
+        onPause={pauseAll}
+        onClear={clear}
+        previousElapsedTime={totalTime}
+        startTime={
+          ongoingTasks.size > 0 && lastEventTime !== undefined
+            ? lastEventTime
+            : undefined
+        }
+      />
       <Fab
         color="primary"
         onClick={add}
@@ -267,8 +234,15 @@ const Home = () => {
                 <Grid xs={12} sm={6} md={4} lg={3} key={uuid}>
                   <TaskCard
                     task={name}
-                    ongoing={ongoingTasks.includes(uuid)}
-                    time={times.get(uuid) ?? 0}
+                    ongoing={
+                      ongoingTasks.has(uuid) && lastEventTime !== undefined
+                        ? {
+                            startTime: lastEventTime,
+                            slowness: ongoingTasks.size,
+                          }
+                        : undefined
+                    }
+                    previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
                     onPause={() => pause(uuid)}
                     onResume={() => resume(uuid)}
                     onFocus={() => focus(uuid)}

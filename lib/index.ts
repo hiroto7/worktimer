@@ -4,28 +4,26 @@ export interface TaskEvent {
   readonly type: "resume" | "pause";
 }
 
-export const calculateTaskTimes = (
-  events: readonly TaskEvent[],
-  time: number
-): Map<string, number> => {
-  const result = new Map<string, number>();
+export interface OngoingTaskElapsedTimeParams {
+  readonly startTime: number;
+  readonly slowness: number;
+}
+
+export const analyzeTaskEventSequence = (events: readonly TaskEvent[]) => {
+  const elapsedTimes = new Map<string, number>();
   const ongoingTasks = new Set<string>();
   let previousEventTime: number;
 
-  const update = (time: number) => {
+  for (const { type, task, time } of events) {
     for (const ongoing of ongoingTasks) {
-      const duration = time - previousEventTime;
-      result.set(
+      const duration = time - previousEventTime!;
+      elapsedTimes.set(
         ongoing,
-        (result.get(ongoing) ?? 0) + duration / ongoingTasks.size
+        (elapsedTimes.get(ongoing) ?? 0) + duration / ongoingTasks.size
       );
     }
 
     previousEventTime = time;
-  };
-
-  for (const { type, task, time } of events) {
-    update(time);
 
     switch (type) {
       case "resume": {
@@ -39,17 +37,5 @@ export const calculateTaskTimes = (
     }
   }
 
-  update(time);
-
-  return result;
-};
-
-export const formatTime = (time: number): string => {
-  const hours = Math.floor(time / 1000 / 3600);
-  const minutes = Math.floor(((time / 1000) % 3600) / 60);
-  const seconds = Math.floor((time / 1000) % 60);
-
-  return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-    .toString()
-    .padStart(2, "0")}`;
+  return { elapsedTimes, ongoingTasks };
 };

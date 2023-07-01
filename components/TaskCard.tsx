@@ -1,3 +1,5 @@
+import { OngoingTaskElapsedTimeParams } from "@/lib";
+import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import {
   Delete,
   Edit,
@@ -81,8 +83,8 @@ const MoreMenuButton: React.FC<{
 
 export const TaskCard: React.FC<{
   task: string;
-  time: number;
-  ongoing: boolean;
+  previousElapsedTime: number;
+  ongoing: OngoingTaskElapsedTimeParams | undefined;
   onPause: () => void;
   onResume: () => void;
   onFocus: () => void;
@@ -90,7 +92,7 @@ export const TaskCard: React.FC<{
   onDelete: () => void;
 }> = ({
   task,
-  time,
+  previousElapsedTime,
   ongoing,
   onPause,
   onResume,
@@ -99,6 +101,7 @@ export const TaskCard: React.FC<{
   onDelete,
 }) => {
   const theme = useTheme();
+  const time = useElapsedTime(previousElapsedTime, ongoing);
 
   return (
     <Card
@@ -126,7 +129,7 @@ export const TaskCard: React.FC<{
             variant="h3"
             color={ongoing ? "primary.main" : "text.secondary"}
           >
-            <FormattedTime time={time} blinking={ongoing} />
+            <FormattedTime time={time} blinking={!!ongoing} />
           </Typography>
         </CardContent>
       </CardActionArea>
