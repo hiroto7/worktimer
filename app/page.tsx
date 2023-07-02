@@ -53,6 +53,7 @@ const AddTasksButton: React.FC<{
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        onTransitionExited={() => setText("")}
         maxWidth="xs"
         fullWidth
       >
