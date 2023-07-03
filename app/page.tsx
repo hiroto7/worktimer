@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   Fab,
   Stack,
   TextField,
@@ -58,9 +59,12 @@ const AddTasksButton: React.FC<{
         fullWidth
       >
         <DialogContent>
+          <DialogContentText>
+            You can add multiple tasks by separating them with newlines.
+          </DialogContentText>
           <TextField
             autoFocus
-            margin="dense"
+            margin="normal"
             label="Tasks"
             fullWidth
             multiline
