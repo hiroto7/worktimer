@@ -23,7 +23,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { FormattedTime } from "./FormattedTime";
 
 const MoreMenuButton: React.FC<{
@@ -85,30 +85,39 @@ export const TaskCard: React.FC<{
   task: string;
   previousElapsedTime: number;
   ongoing: OngoingTaskElapsedTimeParams | undefined;
+  draggable: boolean
   onPause: () => void;
   onResume: () => void;
   onFocus: () => void;
   onRename: (name: string) => void;
   onDelete: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }> = ({
   task,
   previousElapsedTime,
   ongoing,
+  draggable,
   onPause,
   onResume,
   onFocus,
   onRename,
   onDelete,
+  onDragStart,
+  onDragEnd,
 }) => {
   const theme = useTheme();
   const time = useElapsedTime(previousElapsedTime, ongoing);
+  const [dragging, setDragging] = useState(false);
 
   return (
     <Card
+      draggable={draggable}
       variant="outlined"
       sx={{
         display: "flex",
         flexDirection: "row",
+        opacity: dragging ? 0.5 : undefined,
         ...(ongoing
           ? {
               borderColor: "primary.main",
@@ -119,8 +128,20 @@ export const TaskCard: React.FC<{
             }
           : {}),
       }}
+      onDragStart={() => {
+        setDragging(true);
+        onDragStart();
+      }}
+      onDragEnd={() => {
+        setDragging(false);
+        onDragEnd();
+      }}
     >
-      <CardActionArea onClick={ongoing ? onPause : onFocus}>
+      <CardActionArea
+        onClick={ongoing ? onPause : onFocus}
+        disableRipple={dragging}
+        disableTouchRipple={dragging}
+      >
         <CardContent>
           <Typography variant="h5" component="h3">
             {task}

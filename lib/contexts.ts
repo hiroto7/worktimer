@@ -1,3 +1,4 @@
+import type { Task } from "@/lib";
 import { createContext } from "react";
 
 export const TasksContext = createContext<{
@@ -19,6 +20,6 @@ export const TaskEventsContext = createContext<{
 } | null>(null);
 
 export const RecentTasksContext = createContext<{
-  readonly tasks: ReadonlySet<string>;
+  readonly tasks: readonly Task[];
   push(task: string): void;
 } | null>(null);

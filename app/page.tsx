@@ -15,7 +15,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const AddTasksButton: React.FC<{
   onAdd: (tasks: readonly string[]) => void;
@@ -89,14 +89,31 @@ const AddTasksButton: React.FC<{
 };
 
 const Home = () => {
-  const { tasks, add } = useTasks();
+  const { tasks: names, add } = useTasks();
+  const [order, setOrder] = useState<readonly string[]>();
+
+  useEffect(() => {
+    const text = localStorage.getItem("task-order");
+    if (text === null) return;
+    const order = JSON.parse(text);
+    setOrder(order);
+  }, []);
+
+  useEffect(() => {
+    if (!order) return;
+    localStorage.setItem("task-order", JSON.stringify(order));
+  }, [order]);
+
+  const tasks = (order ?? [...names.keys()])
+    .filter((task) => names.has(task))
+    .map((uuid) => ({ uuid, name: names.get(uuid)! }));
 
   return (
     <Container component="main">
       <Stack spacing={2} sx={{ my: 2 }} useFlexGap>
         <AddTasksButton onAdd={add} />
         <Box>
-          <TaskCards tasks={tasks} />
+          <TaskCards tasks={tasks} onOrderChange={setOrder} />
         </Box>
       </Stack>
     </Container>

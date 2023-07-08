@@ -14,7 +14,7 @@ export const MyTabs: React.FC = () => {
         value="/recent"
         icon={<History />}
         label="Recent"
-        disabled={tasks.size === 0}
+        disabled={tasks.length === 0}
       />
     </LinkTabs>
   );
