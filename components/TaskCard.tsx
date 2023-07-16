@@ -85,7 +85,8 @@ export const TaskCard: React.FC<{
   task: string;
   previousElapsedTime: number;
   ongoing: OngoingTaskElapsedTimeParams | undefined;
-  draggable: boolean
+  draggable: boolean;
+  active: boolean;
   onPause: () => void;
   onResume: () => void;
   onFocus: () => void;
@@ -98,6 +99,7 @@ export const TaskCard: React.FC<{
   previousElapsedTime,
   ongoing,
   draggable,
+  active,
   onPause,
   onResume,
   onFocus,
@@ -117,8 +119,7 @@ export const TaskCard: React.FC<{
       sx={{
         display: "flex",
         flexDirection: "row",
-        opacity: dragging ? 0.5 : undefined,
-        ...(ongoing
+        ...(active
           ? {
               borderColor: "primary.main",
               backgroundColor: alpha(
@@ -140,7 +141,6 @@ export const TaskCard: React.FC<{
       <CardActionArea
         onClick={ongoing ? onPause : onFocus}
         disableRipple={dragging}
-        disableTouchRipple={dragging}
       >
         <CardContent>
           <Typography variant="h5" component="h3">
@@ -148,7 +148,7 @@ export const TaskCard: React.FC<{
           </Typography>
           <Typography
             variant="h3"
-            color={ongoing ? "primary.main" : "text.secondary"}
+            color={active ? "primary.main" : "text.secondary"}
           >
             <FormattedTime time={time} blinking={!!ongoing} />
           </Typography>

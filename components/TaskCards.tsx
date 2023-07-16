@@ -51,6 +51,10 @@ export const TaskCards: React.FC<{
                   }
                 : undefined
             }
+            active={
+              (draggedTask === undefined && ongoingTasks.has(uuid)) ||
+              draggedTask === uuid
+            }
             previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
             draggable={!!onOrderChange}
             onPause={() => pause(uuid)}
