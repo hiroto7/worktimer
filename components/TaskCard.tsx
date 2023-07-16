@@ -23,7 +23,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { FormattedTime } from "./FormattedTime";
 
 const MoreMenuButton: React.FC<{
@@ -85,31 +85,41 @@ export const TaskCard: React.FC<{
   task: string;
   previousElapsedTime: number;
   ongoing: OngoingTaskElapsedTimeParams | undefined;
+  draggable: boolean;
+  active: boolean;
   onPause: () => void;
   onResume: () => void;
   onFocus: () => void;
   onRename: (name: string) => void;
   onDelete: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }> = ({
   task,
   previousElapsedTime,
   ongoing,
+  draggable,
+  active,
   onPause,
   onResume,
   onFocus,
   onRename,
   onDelete,
+  onDragStart,
+  onDragEnd,
 }) => {
   const theme = useTheme();
   const time = useElapsedTime(previousElapsedTime, ongoing);
+  const [dragging, setDragging] = useState(false);
 
   return (
     <Card
+      draggable={draggable}
       variant="outlined"
       sx={{
         display: "flex",
         flexDirection: "row",
-        ...(ongoing
+        ...(active
           ? {
               borderColor: "primary.main",
               backgroundColor: alpha(
@@ -119,15 +129,27 @@ export const TaskCard: React.FC<{
             }
           : {}),
       }}
+      onDragStart={(event) => {
+        event.dataTransfer.setData("text/plain", task);
+        setDragging(true);
+        onDragStart();
+      }}
+      onDragEnd={() => {
+        setDragging(false);
+        onDragEnd();
+      }}
     >
-      <CardActionArea onClick={ongoing ? onPause : onFocus}>
+      <CardActionArea
+        onClick={ongoing ? onPause : onFocus}
+        disableRipple={dragging}
+      >
         <CardContent>
           <Typography variant="h5" component="h3">
             {task}
           </Typography>
           <Typography
             variant="h3"
-            color={ongoing ? "primary.main" : "text.secondary"}
+            color={active ? "primary.main" : "text.secondary"}
           >
             <FormattedTime time={time} blinking={!!ongoing} />
           </Typography>

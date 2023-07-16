@@ -20,10 +20,12 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
       <ThemeRegistry>
         <TaskEventsProvider>
           <MyAppBar />
-          <RecentTasksProvider>
-            <MyTabs />
-            <TaskProvider>{children}</TaskProvider>
-          </RecentTasksProvider>
+          <TaskProvider>
+            <RecentTasksProvider>
+              <MyTabs />
+              {children}
+            </RecentTasksProvider>
+          </TaskProvider>
         </TaskEventsProvider>
       </ThemeRegistry>
     </body>

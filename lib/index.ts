@@ -1,3 +1,8 @@
+export interface Task {
+  readonly uuid: string;
+  readonly name: string;
+}
+
 export interface TaskEvent {
   readonly task: string;
   readonly time: number;
@@ -38,4 +43,14 @@ export const analyzeTaskEventSequence = (events: readonly TaskEvent[]) => {
   }
 
   return { elapsedTimes, ongoingTasks };
+};
+
+export const move = <T>(array: readonly T[], from: number, to: number) => {
+  if (from === to) return array;
+  else {
+    const result = [...array];
+    result.splice(from, 1);
+    result.splice(to, 0, array[from]!);
+    return result;
+  }
 };
