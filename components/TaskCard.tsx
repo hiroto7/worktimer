@@ -129,7 +129,8 @@ export const TaskCard: React.FC<{
             }
           : {}),
       }}
-      onDragStart={() => {
+      onDragStart={(event) => {
+        event.dataTransfer.setData("text/plain", task);
         setDragging(true);
         onDragStart();
       }}

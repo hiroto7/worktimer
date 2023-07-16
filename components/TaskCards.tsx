@@ -32,7 +32,11 @@ export const TaskCards: React.FC<{
           md={4}
           lg={3}
           key={uuid}
-          onDrop={console.log}
+          onDrop={(event) => {
+            assert(preview);
+            onOrderChange?.(preview);
+            event.preventDefault();
+          }}
           onDragEnter={() => {
             assert(preview !== undefined && draggedTask !== undefined);
             const draggedIndex = preview.indexOf(draggedTask);
@@ -73,8 +77,6 @@ export const TaskCards: React.FC<{
               setPreview(tasks.map(({ uuid }) => uuid));
             }}
             onDragEnd={() => {
-              assert(preview);
-              onOrderChange?.(preview);
               setDraggedTask(undefined);
               setPreview(undefined);
             }}
