@@ -88,15 +88,17 @@ const AddTasksButton: React.FC<{
   );
 };
 
-const Home = () => {
+const Home: React.FC = () => {
   const { tasks: names, add } = useTasks();
   const [order, setOrder] = useState<readonly string[]>();
 
   useEffect(() => {
     const text = localStorage.getItem("task-order");
-    if (text === null) return;
-    const order = JSON.parse(text);
-    setOrder(order);
+    if (text === null) setOrder([]);
+    else {
+      const order = JSON.parse(text);
+      setOrder(order);
+    }
   }, []);
 
   useEffect(() => {
@@ -104,7 +106,9 @@ const Home = () => {
     localStorage.setItem("task-order", JSON.stringify(order));
   }, [order]);
 
-  const tasks = (order ?? [...names.keys()])
+  if (order === undefined) return;
+
+  const tasks = [...new Set([...order, ...names.keys()])]
     .filter((task) => names.has(task))
     .map((uuid) => ({ uuid, name: names.get(uuid)! }));
 
@@ -112,9 +116,7 @@ const Home = () => {
     <Container component="main">
       <Stack spacing={2} sx={{ my: 2 }} useFlexGap>
         <AddTasksButton onAdd={add} />
-        <Box>
-          <TaskCards tasks={tasks} onOrderChange={setOrder} />
-        </Box>
+        <TaskCards tasks={tasks} onOrderChange={setOrder} />
       </Stack>
     </Container>
   );
