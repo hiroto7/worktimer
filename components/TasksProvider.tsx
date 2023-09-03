@@ -1,28 +1,18 @@
 "use client";
 
 import { TasksContext } from "@/lib/contexts";
-import React, { useEffect, useState } from "react";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [tasks, setTasks] = useState<ReadonlyMap<string, string>>();
+  const [text, setText] = useLocalStorage("tasks", "{}");
 
-  useEffect(() => {
-    const text = localStorage.getItem("tasks");
-    if (text === null) setTasks(new Map());
-    else {
-      const tasks = new Map(Object.entries<string>(JSON.parse(text)));
-      setTasks(tasks);
-    }
-  }, []);
+  if (text === undefined) return; 
 
-  useEffect(() => {
-    if (tasks === undefined) return;
-    localStorage.setItem("tasks", JSON.stringify(Object.fromEntries(tasks)));
-  }, [tasks]);
-
-  if (tasks === undefined) return undefined;
+  const tasks = new Map(Object.entries<string>(JSON.parse(text)));
+  const setTasks = (tasks: ReadonlyMap<string, string>) =>
+    setText(JSON.stringify(Object.fromEntries(tasks)));
 
   const add = (newTasks: readonly string[]) =>
     setTasks(

@@ -1,30 +1,20 @@
 "use client";
 
 import { RecentTasksContext } from "@/lib/contexts";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 import { useTasks } from "@/lib/hooks/use-tasks";
-import React, { ReactNode, useEffect, useState } from "react";
 
-export const RecentTasksProvider: React.FC<{ children: ReactNode }> = ({
+export const RecentTasksProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { tasks: names } = useTasks();
-  const [taskUUIDs, setTaskUUIDs] = useState<readonly string[]>();
+  const [text, setText] = useLocalStorage("recent-tasks", "[]");
 
-  useEffect(() => {
-    const text = localStorage.getItem("recent-tasks");
-    if (text === null) setTaskUUIDs([]);
-    else {
-      const tasks: readonly string[] = JSON.parse(text);
-      setTaskUUIDs(tasks);
-    }
-  }, []);
+  if (text === undefined) return;
 
-  useEffect(() => {
-    if (taskUUIDs === undefined) return;
-    localStorage.setItem("recent-tasks", JSON.stringify(taskUUIDs));
-  }, [taskUUIDs]);
-
-  if (taskUUIDs === undefined) return undefined;
+  const taskUUIDs: readonly string[] = JSON.parse(text);
+  const setTaskUUIDs = (taskUUIDs: readonly string[]) =>
+    setText(JSON.stringify(taskUUIDs));
 
   const tasks = taskUUIDs
     .filter((task) => names.has(task))

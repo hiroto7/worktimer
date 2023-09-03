@@ -2,27 +2,18 @@
 
 import { TaskEvent, analyzeTaskEventSequence } from "@/lib";
 import { TaskEventsContext } from "@/lib/contexts";
-import React, { useEffect, useState } from "react";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
 export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [events, setEvents] = useState<readonly TaskEvent[]>();
+  const [text, setText] = useLocalStorage("events", "[]");
 
-  useEffect(() => {
-    const text = localStorage.getItem("events");
-    if (text === null) setEvents([]);
-    else {
-      const events: TaskEvent[] = JSON.parse(text);
-      setEvents(events);
-    }
-  }, []);
+  if (text === undefined) return;
 
-  useEffect(() => {
-    localStorage.setItem("events", JSON.stringify(events));
-  }, [events]);
-
-  if (events === undefined) return undefined;
+  const events: readonly TaskEvent[] = JSON.parse(text);
+  const setEvents = (events: readonly TaskEvent[]) =>
+    setText(JSON.stringify(events));
 
   const { elapsedTimes, ongoingTasks } = analyzeTaskEventSequence(events);
   const lastEventTime = events.at(-1)?.time;

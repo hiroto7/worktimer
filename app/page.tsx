@@ -1,6 +1,7 @@
 "use client";
 
 import { TaskCards } from "@/components/TaskCards";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 import { useTasks } from "@/lib/hooks/use-tasks";
 import { Add } from "@mui/icons-material";
 import {
@@ -15,7 +16,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const AddTasksButton: React.FC<{
   onAdd: (tasks: readonly string[]) => void;
@@ -90,23 +91,12 @@ const AddTasksButton: React.FC<{
 
 const Home: React.FC = () => {
   const { tasks: names, add } = useTasks();
-  const [order, setOrder] = useState<readonly string[]>();
+  const [text, setText] = useLocalStorage("task-order", "[]");
 
-  useEffect(() => {
-    const text = localStorage.getItem("task-order");
-    if (text === null) setOrder([]);
-    else {
-      const order = JSON.parse(text);
-      setOrder(order);
-    }
-  }, []);
+  if (text === undefined) return;
 
-  useEffect(() => {
-    if (!order) return;
-    localStorage.setItem("task-order", JSON.stringify(order));
-  }, [order]);
-
-  if (order === undefined) return;
+  const order: readonly string[] = JSON.parse(text);
+  const setOrder = (order: readonly string[]) => setText(JSON.stringify(order));
 
   const tasks = [...new Set([...order, ...names.keys()])]
     .filter((task) => names.has(task))
