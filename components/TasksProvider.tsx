@@ -3,16 +3,23 @@
 import { TasksContext } from "@/lib/contexts";
 import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
+const parse = (text: string) =>
+  new Map(Object.entries<string>(JSON.parse(text)));
+
+const stringify = (tasks: ReadonlyMap<string, string>) =>
+  JSON.stringify(Object.fromEntries(tasks));
+
+const INITIAL_VALUE: ReadonlyMap<string, string> = new Map();
+
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [text, setText] = useLocalStorage("tasks", "{}");
+  const [tasks, setTasks] = useLocalStorage("tasks", INITIAL_VALUE, {
+    parse,
+    stringify,
+  });
 
-  if (text === undefined) return; 
-
-  const tasks = new Map(Object.entries<string>(JSON.parse(text)));
-  const setTasks = (tasks: ReadonlyMap<string, string>) =>
-    setText(JSON.stringify(Object.fromEntries(tasks)));
+  if (tasks === undefined) return;
 
   const add = (newTasks: readonly string[]) =>
     setTasks(

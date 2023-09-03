@@ -89,14 +89,17 @@ const AddTasksButton: React.FC<{
   );
 };
 
+const INITIAL_VALUE = [] as const;
+
 const Home: React.FC = () => {
   const { tasks: names, add } = useTasks();
-  const [text, setText] = useLocalStorage("task-order", "[]");
+  const [order, setOrder] = useLocalStorage<readonly string[]>(
+    "task-order",
+    INITIAL_VALUE,
+    JSON
+  );
 
-  if (text === undefined) return;
-
-  const order: readonly string[] = JSON.parse(text);
-  const setOrder = (order: readonly string[]) => setText(JSON.stringify(order));
+  if (order === undefined) return;
 
   const tasks = [...new Set([...order, ...names.keys()])]
     .filter((task) => names.has(task))

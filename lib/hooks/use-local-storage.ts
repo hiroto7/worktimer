@@ -1,24 +1,35 @@
 import { useEffect, useState } from "react";
 
-export const useLocalStorage = (key: string, initialValue: string) => {
-  const [value, setValue] = useState<string>();
+export const useLocalStorage = <V>(
+  key: string,
+  initialValue: V,
+  {
+    parse,
+    stringify,
+  }: {
+    parse: (text: string) => V;
+    stringify: (value: V) => string;
+  }
+) => {
+  const [value, setValue] = useState<V>();
 
-  const set = (value: string) => {
+  const set = (value: V) => {
     setValue(value);
-    localStorage.setItem(key, value);
+    localStorage.setItem(key, stringify(value));
   };
 
   useEffect(() => {
-    setValue(localStorage.getItem(key) ?? initialValue);
+    const text = localStorage.getItem(key);
+    setValue(text !== null ? parse(text) : initialValue);
 
     const listener = (event: StorageEvent) => {
       if (event.key !== key || event.storageArea !== localStorage) return;
-      setValue(event.newValue ?? initialValue);
+      setValue(event.newValue !== null ? parse(event.newValue) : initialValue);
     };
 
     addEventListener("storage", listener);
     return () => removeEventListener("storage", listener);
-  }, [key, initialValue]);
+  }, [key, initialValue, parse]);
 
   return [value, set] as const;
 };

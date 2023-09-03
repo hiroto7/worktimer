@@ -4,17 +4,19 @@ import { RecentTasksContext } from "@/lib/contexts";
 import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 import { useTasks } from "@/lib/hooks/use-tasks";
 
+const INITIAL_VALUE = [] as const;
+
 export const RecentTasksProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { tasks: names } = useTasks();
-  const [text, setText] = useLocalStorage("recent-tasks", "[]");
+  const [taskUUIDs, setTaskUUIDs] = useLocalStorage<readonly string[]>(
+    "recent-tasks",
+    INITIAL_VALUE,
+    JSON
+  );
 
-  if (text === undefined) return;
-
-  const taskUUIDs: readonly string[] = JSON.parse(text);
-  const setTaskUUIDs = (taskUUIDs: readonly string[]) =>
-    setText(JSON.stringify(taskUUIDs));
+  if (taskUUIDs === undefined) return;
 
   const tasks = taskUUIDs
     .filter((task) => names.has(task))
