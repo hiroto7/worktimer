@@ -35,7 +35,7 @@ const RecentPage = () => {
           {events.toReversed().map(({ type, time, task }) => {
             const Icon = { resume: PlayArrow, pause: Pause }[type];
             return (
-              <TableRow key={task}>
+              <TableRow key={`${time}-${task}`}>
                 <TableCell component="th" scope="row">
                   {new Date(time).toLocaleString()}
                 </TableCell>
