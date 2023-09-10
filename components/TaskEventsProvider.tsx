@@ -76,6 +76,7 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <TaskEventsContext.Provider
       value={{
+        events,
         elapsedTimes,
         ongoingTasks,
         lastEventTime,
