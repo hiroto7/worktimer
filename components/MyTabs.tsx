@@ -1,9 +1,9 @@
 "use client";
 
-import { History, Home } from "@mui/icons-material";
+import { useRecentTasks } from "@/lib/hooks/use-recent-tasks";
+import { History, Home, Timeline } from "@mui/icons-material";
 import { LinkTab } from "./LinkTab";
 import { LinkTabs } from "./LinkTabs";
-import { useRecentTasks } from "@/lib/hooks/use-recent-tasks";
 
 export const MyTabs: React.FC = () => {
   const { tasks } = useRecentTasks();
@@ -14,6 +14,12 @@ export const MyTabs: React.FC = () => {
         value="/recent"
         icon={<History />}
         label="Recent"
+        disabled={tasks.length === 0}
+      />
+      <LinkTab
+        value="/history"
+        icon={<Timeline />}
+        label="History"
         disabled={tasks.length === 0}
       />
     </LinkTabs>

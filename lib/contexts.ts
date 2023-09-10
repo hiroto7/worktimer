@@ -1,4 +1,4 @@
-import type { Task } from "@/lib";
+import type { Task, TaskEvent } from "@/lib";
 import { createContext } from "react";
 
 export const TasksContext = createContext<{
@@ -9,6 +9,7 @@ export const TasksContext = createContext<{
 } | null>(null);
 
 export const TaskEventsContext = createContext<{
+  events: readonly TaskEvent[];
   elapsedTimes: ReadonlyMap<string, number>;
   ongoingTasks: ReadonlySet<string>;
   lastEventTime: number | undefined;
