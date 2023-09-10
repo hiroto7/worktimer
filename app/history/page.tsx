@@ -5,13 +5,15 @@ import { useTasks } from "@/lib/hooks/use-tasks";
 import { Pause, PlayArrow } from "@mui/icons-material";
 import {
   Container,
+  Grow,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableRow,
+  TableRow
 } from "@mui/material";
+import { TransitionGroup } from "react-transition-group";
 
 const capitalize = <S extends string>(text: S) =>
   (text[0] !== undefined
@@ -32,24 +34,28 @@ const RecentPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {events.toReversed().map(({ type, time, task }) => {
-            const Icon = { resume: PlayArrow, pause: Pause }[type];
-            return (
-              <TableRow key={`${time}-${task}`}>
-                <TableCell component="th" scope="row">
-                  {new Date(time).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Icon />
-                    <span>
-                      {capitalize(type)} <b>{tasks.get(task)}</b>
-                    </span>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          <TransitionGroup component={null}>
+            {events.toReversed().map(({ type, time, task }) => {
+              const Icon = { resume: PlayArrow, pause: Pause }[type];
+              return (
+                <Grow key={`${time}-${task}`}>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      {new Date(time).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <Icon />
+                        <span>
+                          {capitalize(type)} <b>{tasks.get(task)}</b>
+                        </span>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                </Grow>
+              );
+            })}
+          </TransitionGroup>
         </TableBody>
       </Table>
     </Container>
