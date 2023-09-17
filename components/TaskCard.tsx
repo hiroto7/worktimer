@@ -7,6 +7,7 @@ import {
   MoreVert,
   Pause,
   PlayArrow,
+  TrendingFlat,
 } from "@mui/icons-material";
 import {
   Card,
@@ -29,9 +30,10 @@ import { FormattedTime } from "./FormattedTime";
 const MoreMenuButton: React.FC<{
   deleteDisabled: boolean;
   onFocus: () => void;
+  onTransfer: () => void;
   onRename: () => void;
   onDelete: () => void;
-}> = ({ deleteDisabled, onFocus, onRename, onDelete }) => {
+}> = ({ deleteDisabled, onFocus, onTransfer, onRename, onDelete }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -51,6 +53,17 @@ const MoreMenuButton: React.FC<{
             <Highlight />
           </ListItemIcon>
           <ListItemText>Solo</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onTransfer();
+            setAnchorEl(null);
+          }}
+        >
+          <ListItemIcon>
+            <TrendingFlat />
+          </ListItemIcon>
+          <ListItemText>Transfer time</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem
@@ -90,6 +103,7 @@ export const TaskCard: React.FC<{
   onPause: () => void;
   onResume: () => void;
   onFocus: () => void;
+  onTransfer: () => void;
   onRename: (name: string) => void;
   onDelete: () => void;
   onDragStart: () => void;
@@ -103,6 +117,7 @@ export const TaskCard: React.FC<{
   onPause,
   onResume,
   onFocus,
+  onTransfer,
   onRename,
   onDelete,
   onDragStart,
@@ -163,6 +178,7 @@ export const TaskCard: React.FC<{
         <MoreMenuButton
           deleteDisabled={time > 0}
           onFocus={onFocus}
+          onTransfer={onTransfer}
           onRename={() => {
             const name = prompt(undefined, task);
             if (name) onRename(name);
