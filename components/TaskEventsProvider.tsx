@@ -17,8 +17,8 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   if (events === undefined) return;
 
-  const { elapsedTimes, ongoingTasks } = analyzeTaskEventSequence(events);
-  const lastEventTime = events.at(-1)?.time;
+  const { elapsedTimes, ongoingTasks, lastEventTime } =
+    analyzeTaskEventSequence(events);
 
   const resume = (task: string) =>
     setEvents([
@@ -73,6 +73,12 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const clear = () => setEvents([]);
 
+  const transfer = (time: number, from: string, to: string) =>
+    setEvents([
+      ...events,
+      { from, to, value: time, type: "transfer", time: Date.now() },
+    ]);
+
   return (
     <TaskEventsContext.Provider
       value={{
@@ -85,6 +91,7 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
         focus,
         pauseAll,
         clear,
+        transfer,
       }}
     >
       {children}

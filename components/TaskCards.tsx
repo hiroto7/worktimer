@@ -24,15 +24,19 @@ const TimeTransferDialog: React.FC<{
   open: boolean;
   onClose: () => void;
 }> = ({ tasks, from: defaultFrom, open, onClose }) => {
-  const [from, setFrom] = useState(defaultFrom);
-  const [to, setTo] = useState<string>();
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [time, setTime] = useState("");
+  const { transfer } = useTaskEvents();
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      onTransitionEnter={() => setFrom(defaultFrom)}
-      onTransitionExited={() => setTo(undefined)}
+      onTransitionEnter={() => {
+        setFrom(defaultFrom ?? "");
+        setTo("");
+      }}
     >
       <DialogContent>
         <FormControl margin="normal" fullWidth>
@@ -44,7 +48,7 @@ const TimeTransferDialog: React.FC<{
             onChange={({ target: { value } }) => setFrom(value)}
           >
             {tasks.map(({ name, uuid }) => (
-              <MenuItem value={uuid} key={uuid}>
+              <MenuItem value={uuid} key={uuid} disabled={uuid === to}>
                 {name}
               </MenuItem>
             ))}
@@ -59,17 +63,32 @@ const TimeTransferDialog: React.FC<{
             onChange={({ target: { value } }) => setTo(value)}
           >
             {tasks.map(({ name, uuid }) => (
-              <MenuItem value={uuid} key={uuid}>
+              <MenuItem value={uuid} key={uuid} disabled={uuid === from}>
                 {name}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-        <TextField autoFocus margin="normal" label="Time" fullWidth />
+        <TextField
+          type="number"
+          autoFocus
+          margin="normal"
+          label="Time"
+          fullWidth
+          onChange={({ target: { value } }) => setTime(value)}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button>Transfer</Button>
+        <Button
+          disabled={from === undefined || to === undefined || from === to}
+          onClick={() => {
+            transfer(+time, from!, to!);
+            onClose();
+          }}
+        >
+          Transfer
+        </Button>
       </DialogActions>
     </Dialog>
   );
@@ -85,7 +104,6 @@ export const TaskCards: React.FC<{
   const { push } = useRecentTasks();
   const [draggedTask, setDraggedTask] = useState<string>();
   const [preview, setPreview] = useState<readonly string[]>();
-  const [open, setOpen] = useState(false);
   const [from, setFrom] = useState<string>();
 
   return (
@@ -93,8 +111,8 @@ export const TaskCards: React.FC<{
       <TimeTransferDialog
         tasks={tasks}
         from={from}
-        open={open}
-        onClose={() => setOpen(false)}
+        open={from !== undefined}
+        onClose={() => setFrom(undefined)}
       />
       <Grid container spacing={2}>
         {(
@@ -147,10 +165,7 @@ export const TaskCards: React.FC<{
                 focus(uuid);
                 push(uuid);
               }}
-              onTransfer={() => {
-                setOpen(true);
-                setFrom(uuid);
-              }}
+              onTransfer={() => setFrom(uuid)}
               onRename={(name) => rename(uuid, name)}
               onDelete={() => remove(uuid)}
               onDragStart={() => {

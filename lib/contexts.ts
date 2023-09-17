@@ -16,6 +16,7 @@ export const TaskEventsContext = createContext<{
   resume: (task: string) => void;
   pause: (task: string) => void;
   focus: (task: string) => void;
+  transfer: (time: number, from: string, to: string) => void;
   pauseAll: () => void;
   clear: () => void;
 } | null>(null);
