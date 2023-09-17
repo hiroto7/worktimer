@@ -20,39 +20,60 @@ import { useState } from "react";
 
 const TimeTransferDialog: React.FC<{
   tasks: readonly Task[];
+  from: string | undefined;
   open: boolean;
   onClose: () => void;
-}> = ({ tasks, open, onClose }) => (
-  <Dialog open={open} onClose={onClose}>
-    <DialogContent>
-      <FormControl margin="normal" fullWidth>
-        <InputLabel>From</InputLabel>
-        <Select label="From" fullWidth>
-          {tasks.map(({ name, uuid }) => (
-            <MenuItem value={uuid} key={uuid}>
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl margin="normal" fullWidth>
-        <InputLabel>To</InputLabel>
-        <Select label="To">
-          {tasks.map(({ name, uuid }) => (
-            <MenuItem value={uuid} key={uuid}>
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <TextField autoFocus margin="normal" label="Time" fullWidth />
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button>Transfer</Button>
-    </DialogActions>
-  </Dialog>
-);
+}> = ({ tasks, from: defaultFrom, open, onClose }) => {
+  const [from, setFrom] = useState(defaultFrom);
+  const [to, setTo] = useState<string>();
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      onTransitionEnter={() => setFrom(defaultFrom)}
+      onTransitionExited={() => setTo(undefined)}
+    >
+      <DialogContent>
+        <FormControl margin="normal" fullWidth>
+          <InputLabel>From</InputLabel>
+          <Select
+            label="From"
+            fullWidth
+            value={from}
+            onChange={({ target: { value } }) => setFrom(value)}
+          >
+            {tasks.map(({ name, uuid }) => (
+              <MenuItem value={uuid} key={uuid}>
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl margin="normal" fullWidth>
+          <InputLabel>To</InputLabel>
+          <Select
+            autoFocus
+            label="To"
+            value={to}
+            onChange={({ target: { value } }) => setTo(value)}
+          >
+            {tasks.map(({ name, uuid }) => (
+              <MenuItem value={uuid} key={uuid}>
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField autoFocus margin="normal" label="Time" fullWidth />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button>Transfer</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export const TaskCards: React.FC<{
   tasks: readonly Task[];
@@ -65,11 +86,13 @@ export const TaskCards: React.FC<{
   const [draggedTask, setDraggedTask] = useState<string>();
   const [preview, setPreview] = useState<readonly string[]>();
   const [open, setOpen] = useState(false);
+  const [from, setFrom] = useState<string>();
 
   return (
     <>
       <TimeTransferDialog
         tasks={tasks}
+        from={from}
         open={open}
         onClose={() => setOpen(false)}
       />
@@ -124,7 +147,10 @@ export const TaskCards: React.FC<{
                 focus(uuid);
                 push(uuid);
               }}
-              onTransfer={() => setOpen(true)}
+              onTransfer={() => {
+                setOpen(true);
+                setFrom(uuid);
+              }}
               onRename={(name) => rename(uuid, name)}
               onDelete={() => remove(uuid)}
               onDragStart={() => {
