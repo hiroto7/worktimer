@@ -1,4 +1,5 @@
-import { Task } from "@/lib";
+import { OngoingTaskElapsedTimeParams, Task } from "@/lib";
+import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import {
   Button,
@@ -7,11 +8,31 @@ import {
   DialogContent,
   FormControl,
   InputLabel,
+  ListItemText,
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { FormattedTime } from "./FormattedTime";
+
+const MenuItemContent: React.FC<{
+  previousElapsedTime: number;
+  ongoing: OngoingTaskElapsedTimeParams | undefined;
+  name: string;
+}> = ({ previousElapsedTime, ongoing, name }) => {
+  const time = useElapsedTime(previousElapsedTime, ongoing);
+
+  return (
+    <>
+      <ListItemText>{name}</ListItemText>
+      <Typography variant="body2" color="text.secondary">
+        <FormattedTime time={time} blinking={ongoing !== undefined} />
+      </Typography>
+    </>
+  );
+};
 
 export const TimeTransferDialog: React.FC<{
   tasks: readonly Task[];
@@ -22,7 +43,16 @@ export const TimeTransferDialog: React.FC<{
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [time, setTime] = useState("");
-  const { transfer } = useTaskEvents();
+  const { transfer, elapsedTimes, lastEventTime, ongoingTasks } =
+    useTaskEvents();
+
+  const ongoing: OngoingTaskElapsedTimeParams | undefined =
+    lastEventTime !== undefined
+      ? {
+          startTime: lastEventTime,
+          slowness: ongoingTasks.size,
+        }
+      : undefined;
 
   return (
     <Dialog
@@ -44,7 +74,11 @@ export const TimeTransferDialog: React.FC<{
           >
             {tasks.map(({ name, uuid }) => (
               <MenuItem value={uuid} key={uuid} disabled={uuid === to}>
-                {name}
+                <MenuItemContent
+                  previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
+                  ongoing={ongoingTasks.has(uuid) ? ongoing : undefined}
+                  name={name}
+                />
               </MenuItem>
             ))}
           </Select>
@@ -59,7 +93,11 @@ export const TimeTransferDialog: React.FC<{
           >
             {tasks.map(({ name, uuid }) => (
               <MenuItem value={uuid} key={uuid} disabled={uuid === from}>
-                {name}
+                <MenuItemContent
+                  previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
+                  ongoing={ongoingTasks.has(uuid) ? ongoing : undefined}
+                  name={name}
+                />
               </MenuItem>
             ))}
           </Select>
