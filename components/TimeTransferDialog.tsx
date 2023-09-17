@@ -9,6 +9,7 @@ import {
   DialogContent,
   FormControl,
   IconButton,
+  InputAdornment,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -45,9 +46,11 @@ export const TimeTransferDialog: React.FC<{
 }> = ({ tasks, from: defaultFrom, open, onClose }) => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [time, setTime] = useState("");
+  const [text, setText] = useState("");
   const { transfer, elapsedTimes, lastEventTime, ongoingTasks } =
     useTaskEvents();
+
+  const time = +text * 1000;
 
   const ongoing: OngoingTaskElapsedTimeParams | undefined =
     lastEventTime !== undefined
@@ -57,6 +60,11 @@ export const TimeTransferDialog: React.FC<{
         }
       : undefined;
 
+  const fromTime = useElapsedTime(
+    elapsedTimes.get(from) ?? 0,
+    ongoingTasks.has(from) ? ongoing : undefined
+  );
+
   return (
     <Dialog
       open={open}
@@ -64,6 +72,7 @@ export const TimeTransferDialog: React.FC<{
       onTransitionEnter={() => {
         setFrom(defaultFrom ?? "");
         setTo("");
+        setText("");
       }}
       fullWidth
     >
@@ -134,19 +143,31 @@ export const TimeTransferDialog: React.FC<{
           margin="normal"
           label="Time"
           fullWidth
-          onChange={({ target: { value } }) => setTime(value)}
+          onChange={({ target: { value } }) => setText(value)}
+          helperText={
+            <FormattedTime time={Math.max(time, 0)} blinking={false} />
+          }
+          inputProps={{
+            min: 1,
+            max: from !== "" ? Math.round(fromTime / 1000) : undefined,
+          }}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">s</InputAdornment>,
+          }}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button
-          disabled={from === undefined || to === undefined || from === to}
+          disabled={from === "" || to === "" || time <= 0 || time > fromTime}
           onClick={() => {
-            transfer(+time, from!, to!);
+            transfer(time, from, to);
             onClose();
           }}
         >
-          Transfer
+          <span>
+            Transfer <FormattedTime time={Math.max(time, 0)} blinking={false} />
+          </span>
         </Button>
       </DialogActions>
     </Dialog>
