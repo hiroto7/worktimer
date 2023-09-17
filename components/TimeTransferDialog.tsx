@@ -1,4 +1,5 @@
 import { OngoingTaskElapsedTimeParams, Task } from "@/lib";
+import { format, getDuration } from "@/lib/duration";
 import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { SwapHoriz, SwapVert } from "@mui/icons-material";
@@ -19,7 +20,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { useState } from "react";
-import { FormattedTime } from "./FormattedTime";
+import { BlinkingTime } from "./BlinkingTime";
 
 const MenuItemContent: React.FC<{
   previousElapsedTime: number;
@@ -32,7 +33,10 @@ const MenuItemContent: React.FC<{
     <>
       <ListItemText>{name}</ListItemText>
       <Typography variant="body2" color="text.secondary">
-        <FormattedTime time={time} blinking={ongoing !== undefined} />
+        <BlinkingTime
+          duration={getDuration(time)}
+          blinking={ongoing !== undefined}
+        />
       </Typography>
     </>
   );
@@ -144,9 +148,7 @@ export const TimeTransferDialog: React.FC<{
           label="Time"
           fullWidth
           onChange={({ target: { value } }) => setText(value)}
-          helperText={
-            <FormattedTime time={Math.max(time, 0)} blinking={false} />
-          }
+          helperText={format(getDuration(Math.max(time, 0)))}
           inputProps={{
             min: 1,
             max: from !== "" ? Math.round(fromTime / 1000) : undefined,
@@ -165,9 +167,7 @@ export const TimeTransferDialog: React.FC<{
             onClose();
           }}
         >
-          <span>
-            Transfer <FormattedTime time={Math.max(time, 0)} blinking={false} />
-          </span>
+          Transfer {format(getDuration(Math.max(time, 0)))}
         </Button>
       </DialogActions>
     </Dialog>

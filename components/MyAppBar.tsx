@@ -1,6 +1,7 @@
 "use client";
 
-import { FormattedTime } from "@/components/FormattedTime";
+import { BlinkingTime } from "@/components/BlinkingTime";
+import { getDuration } from "@/lib/duration";
 import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { Clear, GitHub, Pause } from "@mui/icons-material";
@@ -28,7 +29,10 @@ export const MyAppBar: React.FC = () => {
           worktimer
         </Typography>
         <Typography variant="body1" mr={1}>
-          <FormattedTime time={elapsedTime} blinking={ongoing} />
+          <BlinkingTime
+            duration={getDuration(elapsedTime)}
+            blinking={ongoing}
+          />
         </Typography>
         <IconButton color="inherit" disabled={!ongoing} onClick={pauseAll}>
           <Pause />

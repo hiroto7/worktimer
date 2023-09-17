@@ -1,7 +1,7 @@
 "use client";
 
-import { FormattedTime } from "@/components/FormattedTime";
 import { TaskEvent } from "@/lib";
+import { format, getDuration } from "@/lib/duration";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { useTasks } from "@/lib/hooks/use-tasks";
 import { Pause, PlayArrow, TrendingFlat } from "@mui/icons-material";
@@ -37,11 +37,8 @@ const RecentPage = () => {
       const { from, to, value } = event;
       return (
         <span>
-          Transfer{" "}
-          <b>
-            <FormattedTime time={value} blinking={false} />
-          </b>{" "}
-          from <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
+          Transfer <b>{format(getDuration(value))}</b> from{" "}
+          <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
         </span>
       );
     } else {

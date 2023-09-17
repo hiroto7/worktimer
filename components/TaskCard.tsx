@@ -25,7 +25,8 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
-import { FormattedTime } from "./FormattedTime";
+import { BlinkingTime } from "./BlinkingTime";
+import { getDuration } from "@/lib/duration";
 
 const MoreMenuButton: React.FC<{
   deleteDisabled: boolean;
@@ -166,7 +167,7 @@ export const TaskCard: React.FC<{
             variant="h3"
             color={active ? "primary.main" : "text.secondary"}
           >
-            <FormattedTime time={time} blinking={!!ongoing} />
+            <BlinkingTime duration={getDuration(time)} blinking={!!ongoing} />
           </Typography>
         </CardContent>
       </CardActionArea>
