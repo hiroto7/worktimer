@@ -15,7 +15,7 @@ test("generateCaseName", () => {
 describe("analyzeTaskEventSequence", () => {
   const cases: readonly [
     readonly TaskEvent[],
-    { readonly [task: string]: number },
+    Readonly<Record<string, number>>,
     readonly string[]
   ][] = [
     [[], {}, []],

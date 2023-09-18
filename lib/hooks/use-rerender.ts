@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 export const useRerender = () => {
-  const [_, set] = useState(crypto.randomUUID());
-  const rerender = useCallback(() => set(crypto.randomUUID()), []);
+  const [value, setValue] = useState(0);
+  const rerender = () => setValue(value ^ 1);
   return rerender;
 };
