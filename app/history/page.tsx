@@ -1,10 +1,16 @@
 "use client";
 
-import { TaskEvent } from "@/lib";
+import { TaskEvent, capitalize } from "@/lib";
 import { format, getDuration } from "@/lib/duration";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { useTasks } from "@/lib/hooks/use-tasks";
-import { Pause, PlayArrow, TrendingFlat } from "@mui/icons-material";
+import {
+  Add,
+  Pause,
+  PlayArrow,
+  Remove,
+  TrendingFlat,
+} from "@mui/icons-material";
 import {
   Container,
   Stack,
@@ -14,9 +20,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-
-const capitalize = <S extends string>(text: S) =>
-  (text.toUpperCase().slice(0, 1) + text.slice(1)) as Capitalize<S>;
 
 const getKey = (event: TaskEvent) => {
   const { type, time } = event;
@@ -67,6 +70,8 @@ const RecentPage = () => {
               resume: PlayArrow,
               pause: Pause,
               transfer: TrendingFlat,
+              increase: Add,
+              decrease: Remove,
             }[type];
 
             return (

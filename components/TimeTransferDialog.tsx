@@ -1,5 +1,5 @@
 import { OngoingTaskElapsedTimeParams, Task } from "@/lib";
-import { format, getDuration } from "@/lib/duration";
+import { getDuration } from "@/lib/duration";
 import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { SwapHoriz, SwapVert } from "@mui/icons-material";
@@ -10,17 +10,17 @@ import {
   DialogContent,
   FormControl,
   IconButton,
-  InputAdornment,
   InputLabel,
   ListItemText,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { useState } from "react";
 import { BlinkingTime } from "./BlinkingTime";
+import { DurationField } from "./DurationField";
+import assert from "assert";
 
 const MenuItemContent: React.FC<{
   previousElapsedTime: number;
@@ -50,11 +50,9 @@ export const TimeTransferDialog: React.FC<{
 }> = ({ tasks, from: defaultFrom, open, onClose }) => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [text, setText] = useState("");
+  const [time, setTime] = useState<number>();
   const { transfer, elapsedTimes, lastEventTime, ongoingTasks } =
     useTaskEvents();
-
-  const time = +text * 1000;
 
   const ongoing: OngoingTaskElapsedTimeParams | undefined =
     lastEventTime !== undefined
@@ -76,7 +74,7 @@ export const TimeTransferDialog: React.FC<{
       onTransitionEnter={() => {
         setFrom(defaultFrom ?? "");
         setTo("");
-        setText("");
+        setTime(undefined);
       }}
       fullWidth
     >
@@ -141,33 +139,30 @@ export const TimeTransferDialog: React.FC<{
             </FormControl>
           </Grid>
         </Grid>
-        <TextField
-          type="number"
-          autoFocus
-          margin="normal"
-          label="Time"
-          fullWidth
-          onChange={({ target: { value } }) => setText(value)}
-          helperText={format(getDuration(Math.max(time, 0)))}
-          inputProps={{
-            min: 1,
-            max: from !== "" ? Math.round(fromTime / 1000) : undefined,
-          }}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">s</InputAdornment>,
-          }}
+        <DurationField
+          value={time}
+          max={from !== "" ? fromTime : undefined}
+          autoFocus={false}
+          onChange={setTime}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button
-          disabled={from === "" || to === "" || time <= 0 || time > fromTime}
+          disabled={
+            from === "" ||
+            to === "" ||
+            time === undefined ||
+            time <= 0 ||
+            time > fromTime
+          }
           onClick={() => {
+            assert(time !== undefined);
             transfer(time, from, to);
             onClose();
           }}
         >
-          Transfer {format(getDuration(Math.max(time, 0)))}
+          Transfer
         </Button>
       </DialogActions>
     </Dialog>

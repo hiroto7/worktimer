@@ -17,7 +17,14 @@ export interface TransferEvent {
   readonly type: "transfer";
 }
 
-export type TaskEvent = EssentialEvent | TransferEvent;
+export interface IncreaseEvent {
+  readonly task: string;
+  readonly time: number;
+  readonly value: number;
+  readonly type: "increase" | "decrease";
+}
+
+export type TaskEvent = EssentialEvent | TransferEvent | IncreaseEvent;
 
 export interface OngoingTaskElapsedTimeParams {
   readonly startTime: number;
@@ -63,11 +70,26 @@ export const analyzeTaskEventSequence = (events: readonly TaskEvent[]) => {
 
   for (const event of events) {
     const { type } = event;
-    if (type === "transfer") {
-      const { from, to, value } = event;
-      elapsedTimes.set(from, (elapsedTimes.get(from) ?? 0) - value);
-      elapsedTimes.set(to, (elapsedTimes.get(to) ?? 0) + value);
-    } else essentialEvents.push(event);
+    switch (type) {
+      case "transfer": {
+        const { from, to, value } = event;
+        elapsedTimes.set(from, (elapsedTimes.get(from) ?? 0) - value);
+        elapsedTimes.set(to, (elapsedTimes.get(to) ?? 0) + value);
+        break;
+      }
+      case "increase": {
+        const { task, value } = event;
+        elapsedTimes.set(task, (elapsedTimes.get(task) ?? 0) + value);
+        break;
+      }
+      case "decrease": {
+        const { task, value } = event;
+        elapsedTimes.set(task, (elapsedTimes.get(task) ?? 0) - value);
+        break;
+      }
+      default:
+        essentialEvents.push(event);
+    }
   }
 
   const {
@@ -91,3 +113,6 @@ export const move = <T>(array: readonly T[], from: number, to: number) => {
     return result;
   }
 };
+
+export const capitalize = <S extends string>(text: S) =>
+  (text.toUpperCase().charAt(0) + text.slice(1)) as Capitalize<S>;
