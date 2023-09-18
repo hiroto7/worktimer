@@ -14,9 +14,7 @@ import {
 } from "@mui/material";
 
 const capitalize = <S extends string>(text: S) =>
-  (text[0] !== undefined
-    ? text[0].toUpperCase() + text.slice(1)
-    : "") as Capitalize<S>;
+  (text.toUpperCase().slice(0, 1) + text.slice(1)) as Capitalize<S>;
 
 const RecentPage = () => {
   const { tasks } = useTasks();

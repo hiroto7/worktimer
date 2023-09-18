@@ -4,7 +4,7 @@ import { TasksContext } from "@/lib/contexts";
 import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
 const parse = (text: string) =>
-  new Map(Object.entries<string>(JSON.parse(text)));
+  new Map(Object.entries<string>(JSON.parse(text) as Record<string, string>));
 
 const stringify = (tasks: ReadonlyMap<string, string>) =>
   JSON.stringify(Object.fromEntries(tasks));
