@@ -101,9 +101,7 @@ const Home: React.FC = () => {
 
   if (order === undefined) return;
 
-  const tasks = [...new Set([...order, ...names.keys()])]
-    .filter((task) => names.has(task))
-    .map((uuid) => ({ uuid, name: names.get(uuid)! }));
+  const tasks = [...new Set([...order, ...names.keys()])];
 
   return (
     <Container component="main">
