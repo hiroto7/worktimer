@@ -1,8 +1,10 @@
 "use client";
 
+import { TaskEvent } from "@/lib";
+import { format, getDuration } from "@/lib/duration";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { useTasks } from "@/lib/hooks/use-tasks";
-import { Pause, PlayArrow } from "@mui/icons-material";
+import { Pause, PlayArrow, TrendingFlat } from "@mui/icons-material";
 import {
   Container,
   Stack,
@@ -16,9 +18,38 @@ import {
 const capitalize = <S extends string>(text: S) =>
   (text.toUpperCase().slice(0, 1) + text.slice(1)) as Capitalize<S>;
 
+const getKey = (event: TaskEvent) => {
+  const { type, time } = event;
+  if (type === "transfer") return `${time}-transfer`;
+  else {
+    const { task } = event;
+    return `${time}-${task}`;
+  }
+};
+
 const RecentPage = () => {
   const { tasks } = useTasks();
   const { events } = useTaskEvents();
+
+  const getEventSummary = (event: TaskEvent) => {
+    const { type } = event;
+    if (type === "transfer") {
+      const { from, to, value } = event;
+      return (
+        <span>
+          Transfer <b>{format(getDuration(value))}</b> from{" "}
+          <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
+        </span>
+      );
+    } else {
+      const { task } = event;
+      return (
+        <span>
+          {capitalize(type)} <b>{tasks.get(task)}</b>
+        </span>
+      );
+    }
+  };
 
   return (
     <Container component="main" sx={{ my: 2 }}>
@@ -30,19 +61,23 @@ const RecentPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {events.toReversed().map(({ type, time, task }) => {
-            const Icon = { resume: PlayArrow, pause: Pause }[type];
+          {events.toReversed().map((event) => {
+            const { type, time } = event;
+            const Icon = {
+              resume: PlayArrow,
+              pause: Pause,
+              transfer: TrendingFlat,
+            }[type];
+
             return (
-              <TableRow key={`${time}-${task}`}>
+              <TableRow key={getKey(event)}>
                 <TableCell component="th" scope="row">
                   {new Date(time).toLocaleString()}
                 </TableCell>
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Icon />
-                    <span>
-                      {capitalize(type)} <b>{tasks.get(task)}</b>
-                    </span>
+                    {getEventSummary(event)}
                   </Stack>
                 </TableCell>
               </TableRow>

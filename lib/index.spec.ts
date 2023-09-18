@@ -1,10 +1,10 @@
-import { analyzeTaskEventSequence, move, TaskEvent } from ".";
+import { analyzeEssentialEventSequence, move, type EssentialEvent } from ".";
 
-const generateCaseName = (activities: readonly TaskEvent[]) =>
+const generateCaseName = (activities: readonly EssentialEvent[]) =>
   `[${activities.map(({ task, type }) => `${task}.${type}`).join(", ")}]`;
 
 test("generateCaseName", () => {
-  const activities: readonly TaskEvent[] = [
+  const activities: readonly EssentialEvent[] = [
     { task: "t1", time: 2, type: "resume" },
     { task: "t1", time: 3, type: "pause" },
     { task: "t2", time: 5, type: "resume" },
@@ -12,14 +12,15 @@ test("generateCaseName", () => {
   expect(generateCaseName(activities)).toBe("[t1.resume, t1.pause, t2.resume]");
 });
 
-describe("analyzeTaskEventSequence", () => {
+describe("analyzeEssentialEventSequence", () => {
   const cases: readonly [
-    readonly TaskEvent[],
+    readonly EssentialEvent[],
     Readonly<Record<string, number>>,
-    readonly string[]
+    readonly string[],
+    number | undefined
   ][] = [
-    [[], {}, []],
-    [[{ task: "t1", time: 2, type: "resume" }], {}, ["t1"]],
+    [[], {}, [], undefined],
+    [[{ task: "t1", time: 2, type: "resume" }], {}, ["t1"], 2],
     [
       [
         { task: "t1", time: 2, type: "resume" },
@@ -27,6 +28,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 1 },
       [],
+      3,
     ],
     [
       [
@@ -36,6 +38,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 1 },
       ["t1"],
+      5,
     ],
     [
       [
@@ -46,6 +49,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 3 },
       [],
+      7,
     ],
     [
       [
@@ -55,6 +59,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 1 },
       ["t2"],
+      5,
     ],
     [
       [
@@ -65,6 +70,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 1, t2: 2 },
       [],
+      7,
     ],
     [
       [
@@ -73,6 +79,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 2 },
       ["t1", "t2"],
+      5,
     ],
     [
       [
@@ -82,6 +89,7 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 3, t2: 1 },
       ["t2"],
+      7,
     ],
     [
       [
@@ -91,20 +99,29 @@ describe("analyzeTaskEventSequence", () => {
       ],
       { t1: 3, t2: 1 },
       ["t1"],
+      7,
     ],
   ];
 
   test.each(
-    cases.map(([events, expectedElapsedTimes, expectedOngoingTasks]) => ({
-      events,
-      expected: {
-        elapsedTimes: new Map(Object.entries(expectedElapsedTimes)),
-        ongoingTasks: new Set(expectedOngoingTasks),
-      },
-      name: generateCaseName(events),
-    }))
+    cases.map(
+      ([
+        events,
+        expectedElapsedTimes,
+        expectedOngoingTasks,
+        lastEventTime,
+      ]) => ({
+        events,
+        expected: {
+          elapsedTimes: new Map(Object.entries(expectedElapsedTimes)),
+          ongoingTasks: new Set(expectedOngoingTasks),
+          lastEventTime,
+        },
+        name: generateCaseName(events),
+      })
+    )
   )("$name", ({ events, expected }) =>
-    expect(analyzeTaskEventSequence(events)).toEqual(expected)
+    expect(analyzeEssentialEventSequence(events)).toEqual(expected)
   );
 });
 

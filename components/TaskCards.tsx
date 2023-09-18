@@ -6,6 +6,7 @@ import { useTasks } from "@/lib/hooks/use-tasks";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import assert from "assert";
 import { useState } from "react";
+import { TimeTransferDialog } from "./TimeTransferDialog";
 
 export const TaskCards: React.FC<{
   tasks: readonly Task[];
@@ -17,72 +18,82 @@ export const TaskCards: React.FC<{
   const { push } = useRecentTasks();
   const [draggedTask, setDraggedTask] = useState<string>();
   const [preview, setPreview] = useState<readonly string[]>();
+  const [from, setFrom] = useState<string>();
 
   return (
-    <Grid container spacing={2}>
-      {(
-        preview?.map((uuid) => ({
-          uuid,
-          name: tasks.find((task) => task.uuid === uuid)!.name,
-        })) ?? tasks
-      ).map(({ uuid, name }, index) => (
-        <Grid
-          xs={12}
-          sm={6}
-          md={4}
-          lg={3}
-          key={uuid}
-          onDrop={(event) => {
-            assert(preview);
-            onOrderChange?.(preview);
-            event.preventDefault();
-          }}
-          onDragEnter={() => {
-            assert(preview !== undefined && draggedTask !== undefined);
-            const draggedIndex = preview.indexOf(draggedTask);
-            if (draggedIndex !== index)
-              setPreview(move(preview, draggedIndex, index));
-          }}
-          onDragOver={(event) => event.preventDefault()}
-        >
-          <TaskCard
-            task={name}
-            ongoing={
-              ongoingTasks.has(uuid) && lastEventTime !== undefined
-                ? {
-                    startTime: lastEventTime,
-                    slowness: ongoingTasks.size,
-                  }
-                : undefined
-            }
-            active={
-              (draggedTask === undefined && ongoingTasks.has(uuid)) ||
-              draggedTask === uuid
-            }
-            previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
-            draggable={!!onOrderChange}
-            onPause={() => pause(uuid)}
-            onResume={() => {
-              resume(uuid);
-              push(uuid);
+    <>
+      <TimeTransferDialog
+        tasks={tasks}
+        from={from}
+        open={from !== undefined}
+        onClose={() => setFrom(undefined)}
+      />
+      <Grid container spacing={2}>
+        {(
+          preview?.map((uuid) => ({
+            uuid,
+            name: tasks.find((task) => task.uuid === uuid)!.name,
+          })) ?? tasks
+        ).map(({ uuid, name }, index) => (
+          <Grid
+            xs={12}
+            sm={6}
+            md={4}
+            lg={3}
+            key={uuid}
+            onDrop={(event) => {
+              assert(preview);
+              onOrderChange?.(preview);
+              event.preventDefault();
             }}
-            onFocus={() => {
-              focus(uuid);
-              push(uuid);
+            onDragEnter={() => {
+              assert(preview !== undefined && draggedTask !== undefined);
+              const draggedIndex = preview.indexOf(draggedTask);
+              if (draggedIndex !== index)
+                setPreview(move(preview, draggedIndex, index));
             }}
-            onRename={(name) => rename(uuid, name)}
-            onDelete={() => remove(uuid)}
-            onDragStart={() => {
-              setDraggedTask(uuid);
-              setPreview(tasks.map(({ uuid }) => uuid));
-            }}
-            onDragEnd={() => {
-              setDraggedTask(undefined);
-              setPreview(undefined);
-            }}
-          />
-        </Grid>
-      ))}
-    </Grid>
+            onDragOver={(event) => event.preventDefault()}
+          >
+            <TaskCard
+              task={name}
+              ongoing={
+                ongoingTasks.has(uuid) && lastEventTime !== undefined
+                  ? {
+                      startTime: lastEventTime,
+                      slowness: ongoingTasks.size,
+                    }
+                  : undefined
+              }
+              active={
+                (draggedTask === undefined && ongoingTasks.has(uuid)) ||
+                draggedTask === uuid
+              }
+              previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
+              draggable={!!onOrderChange}
+              onPause={() => pause(uuid)}
+              onResume={() => {
+                resume(uuid);
+                push(uuid);
+              }}
+              onFocus={() => {
+                focus(uuid);
+                push(uuid);
+              }}
+              onTransfer={() => setFrom(uuid)}
+              onRename={(name) => rename(uuid, name)}
+              onDelete={() => remove(uuid)}
+              onDragStart={() => {
+                setDraggedTask(uuid);
+                setPreview(tasks.map(({ uuid }) => uuid));
+              }}
+              onDragEnd={() => {
+                setDraggedTask(undefined);
+                setPreview(undefined);
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </>
   );
 };
