@@ -1,7 +1,8 @@
 import { TaskCard } from "@/components/TaskCard";
-import { Task, move } from "@/lib";
+import { move } from "@/lib";
 import { useRecentTasks } from "@/lib/hooks/use-recent-tasks";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
+import { useTaskSequence } from "@/lib/hooks/use-task-sequence";
 import { useTasks } from "@/lib/hooks/use-tasks";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import assert from "assert";
@@ -9,9 +10,10 @@ import { useState } from "react";
 import { TimeTransferDialog } from "./TimeTransferDialog";
 
 export const TaskCards: React.FC<{
-  tasks: readonly Task[];
+  tasks: readonly string[];
   onOrderChange: ((tasks: readonly string[]) => void) | undefined;
-}> = ({ tasks, onOrderChange }) => {
+}> = ({ tasks: taskUUIDs, onOrderChange }) => {
+  const tasks = useTaskSequence(taskUUIDs);
   const { rename, remove } = useTasks();
   const { ongoingTasks, elapsedTimes, lastEventTime, resume, pause, focus } =
     useTaskEvents();
