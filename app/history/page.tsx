@@ -36,21 +36,41 @@ const RecentPage = () => {
 
   const getEventSummary = (event: TaskEvent) => {
     const { type } = event;
-    if (type === "transfer") {
-      const { from, to, value } = event;
-      return (
-        <span>
-          Transfer <b>{format(getDuration(value))}</b> from{" "}
-          <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
-        </span>
-      );
-    } else {
-      const { task } = event;
-      return (
-        <span>
-          {capitalize(type)} <b>{tasks.get(task)}</b>
-        </span>
-      );
+    switch (type) {
+      case "transfer": {
+        const { from, to, value } = event;
+        return (
+          <span>
+            Transfer <b>{format(getDuration(value))}</b> from{" "}
+            <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
+          </span>
+        );
+      }
+      case "increase": {
+        const { task, value } = event;
+        return (
+          <span>
+            Add <b>{format(getDuration(value))}</b> to <b>{tasks.get(task)}</b>
+          </span>
+        );
+      }
+      case "decrease": {
+        const { task, value } = event;
+        return (
+          <span>
+            Reduce <b>{format(getDuration(value))}</b> from{" "}
+            <b>{tasks.get(task)}</b>
+          </span>
+        );
+      }
+      default: {
+        const { task } = event;
+        return (
+          <span>
+            {capitalize(type)} <b>{tasks.get(task)}</b>
+          </span>
+        );
+      }
     }
   };
 
