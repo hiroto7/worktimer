@@ -66,7 +66,7 @@ const MoreMenuButton: React.FC<{
           }}
         >
           <ListItemIcon>
-            <Highlight />
+            <Highlight fontSize="small" />
           </ListItemIcon>
           <ListItemText>Solo</ListItemText>
         </MenuItem>
@@ -77,7 +77,7 @@ const MoreMenuButton: React.FC<{
           }}
         >
           <ListItemIcon>
-            <Add />
+            <Add fontSize="small" />
           </ListItemIcon>
           <ListItemText>Increase time</ListItemText>
         </MenuItem>
@@ -89,7 +89,7 @@ const MoreMenuButton: React.FC<{
           }}
         >
           <ListItemIcon>
-            <Remove />
+            <Remove fontSize="small" />
           </ListItemIcon>
           <ListItemText>Decrease time</ListItemText>
         </MenuItem>
@@ -100,7 +100,7 @@ const MoreMenuButton: React.FC<{
           }}
         >
           <ListItemIcon>
-            <TrendingFlat />
+            <TrendingFlat fontSize="small" />
           </ListItemIcon>
           <ListItemText>Transfer time to another task</ListItemText>
         </MenuItem>
@@ -112,7 +112,7 @@ const MoreMenuButton: React.FC<{
           }}
         >
           <ListItemIcon>
-            <Edit />
+            <Edit fontSize="small" />
           </ListItemIcon>
           <ListItemText>Rename</ListItemText>
         </MenuItem>
@@ -124,7 +124,7 @@ const MoreMenuButton: React.FC<{
           }}
         >
           <ListItemIcon>
-            <Delete />
+            <Delete fontSize="small" />
           </ListItemIcon>
           <ListItemText>Delete</ListItemText>
         </MenuItem>
