@@ -73,10 +73,16 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const clear = () => setEvents([]);
 
-  const transfer = (time: number, from: string, to: string) =>
+  const increase = (task: string, value: number) =>
+    setEvents([...events, { type: "increase", task, value, time: Date.now() }]);
+
+  const decrease = (task: string, value: number) =>
+    setEvents([...events, { type: "decrease", task, value, time: Date.now() }]);
+
+  const transfer = (value: number, from: string, to: string) =>
     setEvents([
       ...events,
-      { from, to, value: time, type: "transfer", time: Date.now() },
+      { from, to, value, type: "transfer", time: Date.now() },
     ]);
 
   return (
@@ -91,6 +97,8 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
         focus,
         pauseAll,
         clear,
+        increase,
+        decrease,
         transfer,
       }}
     >

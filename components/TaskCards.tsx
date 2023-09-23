@@ -15,8 +15,16 @@ export const TaskCards: React.FC<{
 }> = ({ tasks: taskUUIDs, onOrderChange }) => {
   const tasks = useTaskSequence(taskUUIDs);
   const { rename, remove } = useTasks();
-  const { ongoingTasks, elapsedTimes, lastEventTime, resume, pause, focus } =
-    useTaskEvents();
+  const {
+    ongoingTasks,
+    elapsedTimes,
+    lastEventTime,
+    resume,
+    pause,
+    focus,
+    increase,
+    decrease,
+  } = useTaskEvents();
   const { push } = useRecentTasks();
   const [draggedTask, setDraggedTask] = useState<string>();
   const [preview, setPreview] = useState<readonly string[]>();
@@ -70,6 +78,7 @@ export const TaskCards: React.FC<{
                 (draggedTask === undefined && ongoingTasks.has(uuid)) ||
                 draggedTask === uuid
               }
+              deleteDisabled={elapsedTimes.has(uuid)}
               previousElapsedTime={elapsedTimes.get(uuid) ?? 0}
               draggable={!!onOrderChange}
               onPause={() => pause(uuid)}
@@ -81,6 +90,8 @@ export const TaskCards: React.FC<{
                 focus(uuid);
                 push(uuid);
               }}
+              onIncrease={(value: number) => increase(uuid, value)}
+              onDecrease={(value: number) => decrease(uuid, value)}
               onTransfer={() => setFrom(uuid)}
               onRename={(name) => rename(uuid, name)}
               onDelete={() => remove(uuid)}

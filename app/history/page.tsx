@@ -1,10 +1,16 @@
 "use client";
 
-import { TaskEvent } from "@/lib";
+import { TaskEvent, capitalize } from "@/lib";
 import { format, getDuration } from "@/lib/duration";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { useTasks } from "@/lib/hooks/use-tasks";
-import { Pause, PlayArrow, TrendingFlat } from "@mui/icons-material";
+import {
+  Add,
+  Pause,
+  PlayArrow,
+  Remove,
+  TrendingFlat,
+} from "@mui/icons-material";
 import {
   Container,
   Stack,
@@ -14,9 +20,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-
-const capitalize = <S extends string>(text: S) =>
-  (text.toUpperCase().slice(0, 1) + text.slice(1)) as Capitalize<S>;
 
 const getKey = (event: TaskEvent) => {
   const { type, time } = event;
@@ -33,21 +36,41 @@ const RecentPage = () => {
 
   const getEventSummary = (event: TaskEvent) => {
     const { type } = event;
-    if (type === "transfer") {
-      const { from, to, value } = event;
-      return (
-        <span>
-          Transfer <b>{format(getDuration(value))}</b> from{" "}
-          <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
-        </span>
-      );
-    } else {
-      const { task } = event;
-      return (
-        <span>
-          {capitalize(type)} <b>{tasks.get(task)}</b>
-        </span>
-      );
+    switch (type) {
+      case "transfer": {
+        const { from, to, value } = event;
+        return (
+          <span>
+            Transfer <b>{format(getDuration(value))}</b> from{" "}
+            <b>{tasks.get(from)}</b> to <b>{tasks.get(to)}</b>
+          </span>
+        );
+      }
+      case "increase": {
+        const { task, value } = event;
+        return (
+          <span>
+            Add <b>{format(getDuration(value))}</b> to <b>{tasks.get(task)}</b>
+          </span>
+        );
+      }
+      case "decrease": {
+        const { task, value } = event;
+        return (
+          <span>
+            Reduce <b>{format(getDuration(value))}</b> from{" "}
+            <b>{tasks.get(task)}</b>
+          </span>
+        );
+      }
+      default: {
+        const { task } = event;
+        return (
+          <span>
+            {capitalize(type)} <b>{tasks.get(task)}</b>
+          </span>
+        );
+      }
     }
   };
 
@@ -67,6 +90,8 @@ const RecentPage = () => {
               resume: PlayArrow,
               pause: Pause,
               transfer: TrendingFlat,
+              increase: Add,
+              decrease: Remove,
             }[type];
 
             return (
