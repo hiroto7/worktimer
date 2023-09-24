@@ -12,6 +12,7 @@ import {
   TrendingFlat,
 } from "@mui/icons-material";
 import {
+  Alert,
   Container,
   Stack,
   Table,
@@ -76,40 +77,44 @@ const RecentPage = () => {
 
   return (
     <Container component="main" sx={{ my: 2 }}>
-      <Table sx={{ width: "auto", mx: "auto" }}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Time</TableCell>
-            <TableCell>Event</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {events.toReversed().map((event) => {
-            const { type, time } = event;
-            const Icon = {
-              resume: PlayArrow,
-              pause: Pause,
-              transfer: TrendingFlat,
-              increase: Add,
-              decrease: Remove,
-            }[type];
+      {events.length !== 0 ? (
+        <Table sx={{ width: "auto", mx: "auto" }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Time</TableCell>
+              <TableCell>Event</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {events.toReversed().map((event) => {
+              const { type, time } = event;
+              const Icon = {
+                resume: PlayArrow,
+                pause: Pause,
+                transfer: TrendingFlat,
+                increase: Add,
+                decrease: Remove,
+              }[type];
 
-            return (
-              <TableRow key={getKey(event)}>
-                <TableCell component="th" scope="row">
-                  {new Date(time).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Icon />
-                    {getEventSummary(event)}
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+              return (
+                <TableRow key={getKey(event)}>
+                  <TableCell component="th" scope="row">
+                    {new Date(time).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Icon />
+                      {getEventSummary(event)}
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      ) : (
+        <Alert severity="warning">No events</Alert>
+      )}
     </Container>
   );
 };
