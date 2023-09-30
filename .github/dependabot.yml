@@ -4,6 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - patch
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
