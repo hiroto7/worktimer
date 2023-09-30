@@ -1,10 +1,10 @@
 "use client";
 
 import { useRecentTasks } from "@/lib/hooks/use-recent-tasks";
+import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { History, Home, Timeline } from "@mui/icons-material";
 import { LinkTab } from "./LinkTab";
 import { LinkTabs } from "./LinkTabs";
-import { useTaskEvents } from "@/lib/hooks/use-task-events";
 
 export const MyTabs: React.FC = () => {
   const { tasks } = useRecentTasks();
@@ -14,13 +14,13 @@ export const MyTabs: React.FC = () => {
     <LinkTabs centered>
       <LinkTab value="/" icon={<Home />} label="Home" />
       <LinkTab
-        value="/recent"
+        value="/recent/"
         icon={<History />}
         label="Recent"
         disabled={tasks.length === 0}
       />
       <LinkTab
-        value="/history"
+        value="/history/"
         icon={<Timeline />}
         label="History"
         disabled={events.length === 0}
