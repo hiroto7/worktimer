@@ -1,7 +1,5 @@
 "use client";
 
-import { TaskCards } from "@/components/TaskCards";
-import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 import { useTasks } from "@/lib/hooks/use-tasks";
 import { Add } from "@mui/icons-material";
 import {
@@ -89,25 +87,23 @@ const AddTasksButton: React.FC<{
   );
 };
 
-const INITIAL_VALUE = [] as const;
-
 const Home: React.FC = () => {
-  const { tasks: names, add } = useTasks();
-  const [order, setOrder] = useLocalStorage<readonly string[]>(
-    "task-order",
-    INITIAL_VALUE,
-    JSON
-  );
+  const { add } = useTasks();
+  // const [order, setOrder] = useLocalStorage<readonly string[]>(
+  //   "task-order",
+  //   INITIAL_VALUE,
+  //   JSON
+  // );
 
-  if (order === undefined) return;
+  // if (order === undefined) return;
 
-  const tasks = [...new Set([...order, ...names.keys()])];
+  // const tasks = [...new Set([...order, ...names.keys()])];
 
   return (
     <Container component="main">
       <Stack spacing={2} sx={{ my: 2 }} useFlexGap>
         <AddTasksButton onAdd={add} />
-        <TaskCards tasks={tasks} onOrderChange={setOrder} />
+        {/* <TaskCards tasks={tasks} onOrderChange={setOrder} /> */}
       </Stack>
     </Container>
   );

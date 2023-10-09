@@ -1,7 +1,7 @@
 "use client";
 
 import { BlinkingTime } from "@/components/BlinkingTime";
-import { getDuration } from "@/lib/duration";
+// import { getDuration } from "@/lib/duration";
 import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import { useTaskEvents } from "@/lib/hooks/use-task-events";
 import { Clear, GitHub, Pause } from "@mui/icons-material";
@@ -30,7 +30,7 @@ export const MyAppBar: React.FC = () => {
         </Typography>
         <Typography variant="body1" mr={1}>
           <BlinkingTime
-            duration={getDuration(elapsedTime)}
+            duration={{ hours: 3, minutes: 45, seconds: 67 }}
             blinking={ongoing}
           />
         </Typography>

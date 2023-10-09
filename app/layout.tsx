@@ -1,11 +1,11 @@
-import { MyAppBar } from "@/components/MyAppBar";
-import { MyTabs } from "@/components/MyTabs";
 import { RecentTasksProvider } from "@/components/RecentTasksProvider";
 import { TaskEventsProvider } from "@/components/TaskEventsProvider";
 import { TaskProvider } from "@/components/TasksProvider";
-import ThemeRegistry from "@/components/ThemeRegistry";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { MyTabs } from "@/components/MyTabs";
+import ThemeRegistry from "@/components/ThemeRegistry";
+import { MyAppBar } from "@/components/MyAppBar";
 
 const inter = Inter({ subsets: ["latin"] });
 

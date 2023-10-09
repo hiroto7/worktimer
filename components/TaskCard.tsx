@@ -1,5 +1,4 @@
 import { IncreaseEvent, OngoingTaskElapsedTimeParams } from "@/lib";
-import { getDuration } from "@/lib/duration";
 import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import {
   Add,
@@ -220,7 +219,10 @@ export const TaskCard: React.FC<{
               variant="h3"
               color={active ? "primary.main" : "text.secondary"}
             >
-              <BlinkingTime duration={getDuration(time)} blinking={!!ongoing} />
+              <BlinkingTime
+                duration={{ hours: 3, minutes: 45, seconds: 67 }}
+                blinking={!!ongoing}
+              />
             </Typography>
           </CardContent>
         </CardActionArea>

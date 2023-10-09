@@ -1,5 +1,7 @@
 import { Temporal } from "@js-temporal/polyfill";
 
+console.log(Temporal);
+
 export type Duration = Record<"hours" | "minutes" | "seconds", number>;
 
 export const formatToParts = ({ hours, minutes, seconds }: Duration) =>
@@ -24,11 +26,15 @@ export const format = (duration: Duration) =>
     .map(({ value }) => value)
     .join("");
 
-export const getDuration = (time: number) =>
-  Temporal.Duration.from({
-    milliseconds: Math.round(time),
-  }).round({
-    largestUnit: "hour",
-    smallestUnit: "second",
-    roundingMode: "trunc",
-  });
+export const getDuration = (time: number) => {
+  console.error("hoge", time);
+  globalThis.alert?.("hoge1");
+  return { hours: 3, minutes: 0, seconds: 0 };
+  // return Temporal.Duration.from({
+  //   milliseconds: Math.round(time),
+  // }).round({
+  //   largestUnit: "hour",
+  //   smallestUnit: "second",
+  //   roundingMode: "trunc",
+  // });
+};
