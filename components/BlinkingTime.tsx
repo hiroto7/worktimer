@@ -21,7 +21,7 @@ const Root = styled("span")<{ blinking: boolean }>(
         animation-name: ${blink};
         animation-timing-function: step-end;
       }
-    `
+    `,
 );
 
 export const BlinkingTime: React.FC<{
@@ -30,7 +30,7 @@ export const BlinkingTime: React.FC<{
 }> = ({ duration, blinking }) => (
   <Root blinking={blinking}>
     {formatToParts(duration).map(({ value, type }, index) =>
-      type === "literal" ? <span key={index}>{value}</span> : value
+      type === "literal" ? <span key={index}>{value}</span> : value,
     )}
   </Root>
 );

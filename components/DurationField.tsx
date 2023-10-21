@@ -28,7 +28,7 @@ export const DurationField: React.FC<{
   const handleChange = (value: Dayjs | null) => {
     setInternalValue(value);
     onChange(
-      value?.isValid() ? value.diff(BASE, "millisecond", true) : undefined
+      value?.isValid() ? value.diff(BASE, "millisecond", true) : undefined,
     );
   };
 

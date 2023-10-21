@@ -96,7 +96,7 @@ const Home: React.FC = () => {
   const [order, setOrder] = useLocalStorage<readonly string[]>(
     "task-order",
     INITIAL_VALUE,
-    JSON
+    JSON,
   );
 
   if (order === undefined) return;

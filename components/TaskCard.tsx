@@ -193,7 +193,7 @@ export const TaskCard: React.FC<{
                 borderColor: "primary.main",
                 backgroundColor: alpha(
                   theme.palette.primary.main,
-                  theme.palette.action.selectedOpacity
+                  theme.palette.action.selectedOpacity,
                 ),
               }
             : {}),

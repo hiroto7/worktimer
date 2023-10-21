@@ -11,7 +11,7 @@ export const RecentTasksProvider: React.FC<{ children: React.ReactNode }> = ({
   const [tasks, setTasks] = useLocalStorage<readonly string[]>(
     "recent-tasks",
     INITIAL_VALUE,
-    JSON
+    JSON,
   );
 
   if (tasks === undefined) return;
@@ -24,4 +24,3 @@ export const RecentTasksProvider: React.FC<{ children: React.ReactNode }> = ({
     </RecentTasksContext.Provider>
   );
 };
-

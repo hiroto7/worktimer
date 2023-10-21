@@ -26,7 +26,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
       new Map([
         ...tasks,
         ...newTasks.map((task) => [crypto.randomUUID(), task] as const),
-      ])
+      ]),
     );
 
   const rename = (uuid: string, name: string) =>
