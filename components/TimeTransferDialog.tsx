@@ -64,7 +64,7 @@ export const TimeTransferDialog: React.FC<{
 
   const fromTime = useElapsedTime(
     elapsedTimes.get(from) ?? 0,
-    ongoingTasks.has(from) ? ongoing : undefined
+    ongoingTasks.has(from) ? ongoing : undefined,
   );
 
   return (

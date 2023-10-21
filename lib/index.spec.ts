@@ -17,7 +17,7 @@ describe("analyzeEssentialEventSequence", () => {
     readonly EssentialEvent[],
     Readonly<Record<string, number>>,
     readonly string[],
-    number | undefined
+    number | undefined,
   ][] = [
     [[], {}, [], undefined],
     [[{ task: "t1", time: 2, type: "resume" }], {}, ["t1"], 2],
@@ -118,10 +118,10 @@ describe("analyzeEssentialEventSequence", () => {
           lastEventTime,
         },
         name: generateCaseName(events),
-      })
-    )
+      }),
+    ),
   )("$name", ({ events, expected }) =>
-    expect(analyzeEssentialEventSequence(events)).toEqual(expected)
+    expect(analyzeEssentialEventSequence(events)).toEqual(expected),
   );
 });
 

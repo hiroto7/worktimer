@@ -12,7 +12,7 @@ export const TaskEventsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [events, setEvents] = useLocalStorage<readonly TaskEvent[]>(
     "events",
     INITIAL_VALUE,
-    JSON
+    JSON,
   );
 
   if (events === undefined) return;

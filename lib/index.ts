@@ -32,7 +32,7 @@ export interface OngoingTaskElapsedTimeParams {
 }
 
 export const analyzeEssentialEventSequence = (
-  events: readonly EssentialEvent[]
+  events: readonly EssentialEvent[],
 ) => {
   const elapsedTimes = new Map<string, number>();
   const ongoingTasks = new Set<string>();
@@ -43,7 +43,7 @@ export const analyzeEssentialEventSequence = (
       const duration = time - lastEventTime!;
       elapsedTimes.set(
         ongoing,
-        (elapsedTimes.get(ongoing) ?? 0) + duration / ongoingTasks.size
+        (elapsedTimes.get(ongoing) ?? 0) + duration / ongoingTasks.size,
       );
     }
 

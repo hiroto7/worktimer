@@ -6,7 +6,7 @@ const interval = 1000;
 
 export const useElapsedTime = (
   previousElapsedTime: number,
-  ongoing: OngoingTaskElapsedTimeParams | undefined
+  ongoing: OngoingTaskElapsedTimeParams | undefined,
 ) => {
   const rerender = useRerender();
   const elapsedTime =

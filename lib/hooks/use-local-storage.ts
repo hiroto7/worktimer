@@ -9,7 +9,7 @@ export const useLocalStorage = <V>(
   }: {
     parse: (text: string) => V;
     stringify: (value: V) => string;
-  }
+  },
 ) => {
   const [value, setValue] = useState<V>();
 

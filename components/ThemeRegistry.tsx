@@ -20,7 +20,7 @@ const ThemeRegistry: React.FC<{ children: React.ReactNode }> = ({
           mode: prefersDarkMode ? "dark" : "light",
         },
       }),
-    [prefersDarkMode]
+    [prefersDarkMode],
   );
 
   return (

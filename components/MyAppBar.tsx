@@ -13,13 +13,13 @@ export const MyAppBar: React.FC = () => {
 
   const totalTime = [...elapsedTimes.values()].reduce(
     (previous, current) => previous + current,
-    0
+    0,
   );
 
   const ongoing = ongoingTasks.size > 0 && lastEventTime !== undefined;
   const elapsedTime = useElapsedTime(
     totalTime,
-    ongoing ? { startTime: lastEventTime, slowness: 1 } : undefined
+    ongoing ? { startTime: lastEventTime, slowness: 1 } : undefined,
   );
 
   return (
