@@ -7,7 +7,6 @@ import { Add } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -104,12 +103,12 @@ const Home: React.FC = () => {
   const tasks = [...new Set([...order, ...names.keys()])];
 
   return (
-    <Container component="main">
+    <main>
       <Stack spacing={2} sx={{ my: 2 }} useFlexGap>
         <AddTasksButton onAdd={add} />
         <TaskCards tasks={tasks} onOrderChange={setOrder} />
       </Stack>
-    </Container>
+    </main>
   );
 };
 
