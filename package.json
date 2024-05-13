@@ -16,7 +16,7 @@
     "@js-temporal/polyfill": "^0.4.4",
     "@mui/icons-material": "^5.15.17",
     "@mui/material": "^5.15.17",
-    "@mui/x-date-pickers": "^6.19.7",
+    "@mui/x-date-pickers": "^7.4.0",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "@tsconfig/strictest": "^2.0.5",
