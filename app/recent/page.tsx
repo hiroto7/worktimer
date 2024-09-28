@@ -2,7 +2,6 @@
 
 import { TaskCards } from "@/components/TaskCards";
 import { useRecentTasks } from "@/lib/hooks/use-recent-tasks";
-import { Container } from "@mui/material";
 import { useState } from "react";
 
 const RecentPage = () => {
@@ -10,9 +9,9 @@ const RecentPage = () => {
   const [initialRecentTasks] = useState(recentTasks);
 
   return (
-    <Container component="main" sx={{ my: 2 }}>
+    <main>
       <TaskCards tasks={initialRecentTasks} onOrderChange={undefined} />
-    </Container>
+    </main>
   );
 };
 
