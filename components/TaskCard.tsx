@@ -213,11 +213,11 @@ export const TaskCard: React.FC<{
           disableRipple={dragging}
         >
           <CardContent>
-            <Typography variant="h5" component="h3">
+            <Typography variant="h6" component="h3">
               {task}
             </Typography>
             <Typography
-              variant="h3"
+              variant="h4"
               color={active ? "primary.main" : "text.secondary"}
             >
               <BlinkingTime duration={getDuration(time)} blinking={!!ongoing} />
