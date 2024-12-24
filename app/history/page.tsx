@@ -13,7 +13,6 @@ import {
 } from "@mui/icons-material";
 import {
   Alert,
-  Container,
   Stack,
   Table,
   TableBody,
@@ -76,7 +75,7 @@ const RecentPage = () => {
   };
 
   return (
-    <Container component="main" sx={{ my: 2 }}>
+    <main>
       {events.length !== 0 ? (
         <Table sx={{ width: "auto", mx: "auto" }}>
           <TableHead>
@@ -115,7 +114,7 @@ const RecentPage = () => {
       ) : (
         <Alert severity="warning">No events</Alert>
       )}
-    </Container>
+    </main>
   );
 };
 

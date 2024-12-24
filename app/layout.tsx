@@ -4,6 +4,7 @@ import { RecentTasksProvider } from "@/components/RecentTasksProvider";
 import { TaskEventsProvider } from "@/components/TaskEventsProvider";
 import { TaskProvider } from "@/components/TasksProvider";
 import ThemeRegistry from "@/components/ThemeRegistry";
+import { Container } from "@mui/material";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -22,7 +23,9 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
           <MyAppBar />
           <RecentTasksProvider>
             <MyTabs />
-            <TaskProvider>{children}</TaskProvider>
+            <TaskProvider>
+              <Container sx={{ my: 2 }}>{children}</Container>
+            </TaskProvider>
           </RecentTasksProvider>
         </TaskEventsProvider>
       </ThemeRegistry>
